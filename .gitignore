@@ -1,0 +1,4 @@
+# Bỏ qua file database SQLite
+.venv/
+db.sqlite3
+*.sqlite3
