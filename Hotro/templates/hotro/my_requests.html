@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách yêu cầu</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">PLAYZY</div>
+    <div class="menu">
+        <a href="#">Trang chủ</a>
+        <a href="{% url 'Hotro:tao_yeu_cau' %}">Tạo yêu cầu</a>
+        <a href="#">Đăng xuất</a>
+    </div>
+</div>
+
+<h1 class="section-title">Danh sách yêu cầu của bạn</h1>
+
+<div class="table-container">
+    <table>
+        <tr>
+            <th>Mã yêu cầu</th>
+            <th>Loại</th>
+            <th>Trạng thái</th>
+            <th>Ngày tạo</th>
+            <th>Chi tiết</th>
+        </tr>
+
+        {% for yc in requests %}
+        <tr>
+            <td>{{ yc.ma_yeu_cau }}</td>
+
+            <td>{{ yc.get_loai_yeu_cau_display }}</td>
+
+            <td>{{ yc.get_trang_thai_display }}</td>
+
+            <td>{{ yc.ngay_tao|date:"d/m/Y" }}</td>
+
+            <td>
+                <a class="btn" href="{% url 'Hotro:chi_tiet_yeu_cau' yc.id %}">
+                    Xem
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" style="text-align:center;">Bạn chưa có yêu cầu nào.</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+</div>
+
+<div class="footer">
+    <p>© 2025 PLAYZY - Hỗ trợ khách hàng</p>
+</div>
+
+</body>
+</html>
+

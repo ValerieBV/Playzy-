@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tin tức - Playzy{% endblock %}
+{% block content %}
+
+<style>
+    .news-page-container {
+        max-width: 1200px;
+        margin: 130px auto 30px auto;
+        padding: 0 16px;
+    }
+    
+    .cam-nang-section {
+        margin-bottom: 40px;
+    }
+    
+    .cam-nang-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: #E96607;
+        margin-bottom: 20px;
+        font-family: 'Baloo Bhai', sans-serif;
+    }
+    
+    .cam-nang-carousel {
+        position: relative;
+        background: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .carousel-inner-custom {
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .carousel-track {
+        display: flex;
+        transition: transform 0.5s ease;
+    }
+    
+    .carousel-item-custom {
+        min-width: 100%;
+        display: flex;
+        gap: 20px;
+        padding: 10px;
+    }
+    
+    .carousel-item-content {
+        display: flex;
+        gap: 20px;
+        width: 100%;
+    }
+    
+    .carousel-item-image {
+        flex: 0 0 300px;
+        height: 200px;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .carousel-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .carousel-item-text {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .carousel-item-text p {
+        color: #333;
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 0;
+    }
+    
+    .carousel-control-custom {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #000;
+        color: #fff;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s;
+    }
+    
+    .carousel-control-custom:hover {
+        background: #333;
+    }
+    
+    .carousel-control-prev-custom {
+        left: 10px;
+    }
+    
+    .carousel-control-next-custom {
+        right: 10px;
+    }
+    
+    .articles-section {
+        margin-top: 40px;
+    }
+    
+    .articles-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 25px;
+    }
+    
+    .articles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+    
+    .article-card {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+    
+    .article-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .article-card-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .article-card-body {
+        padding: 20px;
+    }
+    
+    .article-card-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .article-card-excerpt {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .article-card-date {
+        font-size: 12px;
+        color: #999;
+    }
+    
+    .read-more-btn {
+        display: inline-block;
+        margin-top: 10px;
+        color: #1E90FF;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    
+    .read-more-btn:hover {
+        color: #E96607;
+    }
+</style>
+
+<div class="news-page-container">
+    <!-- PHẦN CẨM NANG BỎ TÚI GAME DÂN GIAN -->
+    <div class="cam-nang-section">
+        <h2 class="cam-nang-title">Cẩm nang bỏ túi game dân gian</h2>
+        <div class="cam-nang-carousel">
+            <div class="carousel-inner-custom">
+                <div class="carousel-track" id="camNangTrack">
+                    {% for bai in baiviets|slice:":5" %}
+                    <div class="carousel-item-custom">
+                        <div class="carousel-item-content">
+                            <div class="carousel-item-image">
+                                {% if bai.anh_dai_dien %}
+                                    <img src="{{ bai.anh_dai_dien.url }}" alt="{{ bai.tieu_de }}">
+                                {% else %}
+                                    <img src="{% static 'images/placeholder.png' %}" alt="{{ bai.tieu_de }}">
+                                {% endif %}
+                            </div>
+                            <div class="carousel-item-text">
+                                <p>{{ bai.noi_dung|striptags|truncatewords:50 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <button class="carousel-control-custom carousel-control-prev-custom" id="prevBtn">‹</button>
+            <button class="carousel-control-custom carousel-control-next-custom" id="nextBtn">›</button>
+        </div>
+    </div>
+
+    <!-- PHẦN DANH SÁCH BÀI VIẾT -->
+    <div class="articles-section">
+        <h2 class="articles-title">Xem thêm bài viết khác</h2>
+        <div class="articles-grid">
+            {% for bai in baiviets %}
+            <a href="{% url 'Tintuc:chi_tiet' bai.pk %}" class="article-card">
+                {% if bai.anh_dai_dien %}
+                    <img src="{{ bai.anh_dai_dien.url }}" alt="{{ bai.tieu_de }}" class="article-card-image">
+                {% else %}
+                    <img src="{% static 'images/placeholder.png' %}" alt="{{ bai.tieu_de }}" class="article-card-image">
+                {% endif %}
+                <div class="article-card-body">
+                    <h3 class="article-card-title">{{ bai.tieu_de }}</h3>
+                    <p class="article-card-excerpt">{{ bai.noi_dung|striptags|truncatewords:30 }}</p>
+                    <div class="article-card-date">{{ bai.ngay_dang|date:"d/m/Y" }}</div>
+                    <span class="read-more-btn">Đọc bài viết →</span>
+                </div>
+            </a>
+            {% empty %}
+            <p style="grid-column: 1 / -1; text-align: center; color: #666; padding: 40px;">
+                Chưa có bài viết nào.
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const track = document.getElementById('camNangTrack');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const items = track.querySelectorAll('.carousel-item-custom');
+    
+    if (items.length === 0) {
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+        return;
+    }
+    
+    let currentIndex = 0;
+    const totalItems = items.length;
+    
+    function updateCarousel() {
+        const translateX = -currentIndex * 100;
+        track.style.transform = `translateX(${translateX}%)`;
+    }
+    
+    function showPrev() {
+        currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+        updateCarousel();
+    }
+    
+    function showNext() {
+        currentIndex = (currentIndex + 1) % totalItems;
+        updateCarousel();
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', showPrev);
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', showNext);
+    }
+    
+    // Auto-play (tùy chọn)
+    // let autoPlayInterval = setInterval(showNext, 5000);
+    // track.parentElement.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
+    // track.parentElement.addEventListener('mouseleave', () => {
+    //     autoPlayInterval = setInterval(showNext, 5000);
+    // });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}Chi tiết đơn hàng #{{ don_hang.id }} - Playzy{% endblock %}
+{% block content %}
+
+<style>
+    .order-detail-container {
+        max-width: 1200px;
+        margin: 130px auto 50px auto;
+        padding: 0 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    
+    .page-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: #E96607;
+        font-family: 'Tilt Warp', sans-serif;
+    }
+    
+    .back-link {
+        color: #1E90FF;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .back-link:hover {
+        text-decoration: underline;
+    }
+    
+    .order-detail-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eee;
+    }
+    
+    .info-row {
+        display: flex;
+        margin-bottom: 15px;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: #666;
+        width: 180px;
+        flex-shrink: 0;
+    }
+    
+    .info-value {
+        color: #333;
+        flex: 1;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    
+    .status-cho-xac-nhan {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-dang-giao {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .status-da-giao {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-that-bai {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .order-items {
+        margin-top: 20px;
+    }
+    
+    .order-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+        margin-bottom: 15px;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+    
+    .order-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .item-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+    
+    .item-info {
+        flex: 1;
+    }
+    
+    .item-name {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 16px;
+    }
+    
+    .item-details {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    
+    .item-price {
+        font-weight: 700;
+        color: #E96607;
+        font-size: 16px;
+        margin-top: 8px;
+    }
+    
+    .order-summary {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 15px;
+    }
+    
+    .summary-row.total {
+        font-size: 20px;
+        font-weight: 700;
+        color: #E96607;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid #ddd;
+    }
+    
+    .timeline {
+        margin-top: 30px;
+    }
+    
+    .timeline-item {
+        display: flex;
+        gap: 20px;
+        padding: 15px 0;
+        border-left: 2px solid #eee;
+        padding-left: 30px;
+        position: relative;
+    }
+    
+    .timeline-item:last-child {
+        border-left: none;
+    }
+    
+    .timeline-dot {
+        position: absolute;
+        left: -6px;
+        top: 20px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #E96607;
+        border: 3px solid #fff;
+        box-shadow: 0 0 0 2px #E96607;
+    }
+    
+    .timeline-content {
+        flex: 1;
+    }
+    
+    .timeline-status {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .timeline-date {
+        color: #999;
+        font-size: 13px;
+    }
+    
+    .delivery-info {
+        background: #e3f2fd;
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+    
+    .delivery-title {
+        font-weight: 700;
+        color: #1976d2;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="order-detail-container">
+    <div class="page-header">
+        <h1 class="page-title">Chi tiết đơn hàng #{{ don_hang.id }}</h1>
+        <a href="{% url 'Muahang:theo_doi_don_hang' %}" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách đơn hàng
+        </a>
+    </div>
+    
+    <!-- Thông tin đơn hàng -->
+    <div class="order-detail-card">
+        <h2 class="section-title">Thông tin đơn hàng</h2>
+        
+        <div class="info-row">
+            <div class="info-label">Mã đơn hàng:</div>
+            <div class="info-value"><strong>#{{ don_hang.id }}</strong></div>
+        </div>
+        
+        <div class="info-row">
+            <div class="info-label">Ngày đặt hàng:</div>
+            <div class="info-value">{{ don_hang.ngay_dat|date:"d/m/Y H:i" }}</div>
+        </div>
+        
+        <div class="info-row">
+            <div class="info-label">Trạng thái:</div>
+            <div class="info-value">
+                {% if don_hang.trang_thai == 'cho_xac_nhan' %}
+                    <span class="status-badge status-cho-xac-nhan">{{ don_hang.get_trang_thai_display }}</span>
+                {% elif don_hang.trang_thai == 'dang_giao' %}
+                    <span class="status-badge status-dang-giao">{{ don_hang.get_trang_thai_display }}</span>
+                {% elif don_hang.trang_thai == 'da_giao' %}
+                    <span class="status-badge status-da-giao">{{ don_hang.get_trang_thai_display }}</span>
+                {% elif don_hang.trang_thai == 'that_bai' %}
+                    <span class="status-badge status-that-bai">{{ don_hang.get_trang_thai_display }}</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="info-row">
+            <div class="info-label">Phương thức thanh toán:</div>
+            <div class="info-value">{{ don_hang.get_payment_method_display }}</div>
+        </div>
+        
+        {% if don_hang.ma_voucher %}
+        <div class="info-row">
+            <div class="info-label">Mã voucher:</div>
+            <div class="info-value"><strong style="color: #28a745;">{{ don_hang.ma_voucher }}</strong></div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Thông tin giao hàng -->
+    <div class="order-detail-card">
+        <h2 class="section-title">Thông tin giao hàng</h2>
+        
+        <div class="info-row">
+            <div class="info-label">Họ và tên:</div>
+            <div class="info-value"><strong>{{ don_hang.ho_ten }}</strong></div>
+        </div>
+        
+        <div class="info-row">
+            <div class="info-label">Số điện thoại:</div>
+            <div class="info-value">{{ don_hang.so_dien_thoai }}</div>
+        </div>
+        
+        <div class="info-row">
+            <div class="info-label">Email:</div>
+            <div class="info-value">{{ don_hang.email }}</div>
+        </div>
+        
+        <div class="info-row">
+            <div class="info-label">Địa chỉ:</div>
+            <div class="info-value">{{ don_hang.dia_chi }}</div>
+        </div>
+        
+        <div class="info-row">
+            <div class="info-label">Tỉnh/Thành phố:</div>
+            <div class="info-value">{{ don_hang.tinh }}</div>
+        </div>
+        
+        <div class="info-row">
+            <div class="info-label">Phường/Xã:</div>
+            <div class="info-value">{{ don_hang.phuong_xa }}</div>
+        </div>
+        
+        {% if don_hang.ghi_chu %}
+        <div class="info-row">
+            <div class="info-label">Ghi chú:</div>
+            <div class="info-value">{{ don_hang.ghi_chu }}</div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sản phẩm đã đặt -->
+    <div class="order-detail-card">
+        <h2 class="section-title">Sản phẩm đã đặt</h2>
+        
+        <div class="order-items">
+            {% for item in don_hang.items.all %}
+            <div class="order-item">
+                {% if item.san_pham.anh_dai_dien %}
+                    <img src="{{ item.san_pham.anh_dai_dien.url }}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                {% else %}
+                    <img src="{% static 'images/placeholder.png' %}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                {% endif %}
+                <div class="item-info">
+                    <div class="item-name">{{ item.san_pham.ten_sp }}</div>
+                    <div class="item-details">Số lượng: {{ item.so_luong }}</div>
+                    <div class="item-details">Đơn giá: {{ item.gia|floatformat:0|intcomma }}₫</div>
+                    <div class="item-price">Thành tiền: {{ item.thanh_tien|floatformat:0|intcomma }}₫</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="order-summary">
+            <div class="summary-row">
+                <span>Tạm tính:</span>
+                <span>{{ don_hang.tong_tien|floatformat:0|intcomma }}₫</span>
+            </div>
+            <div class="summary-row">
+                <span>Phí vận chuyển:</span>
+                <span>{{ don_hang.phi_van_chuyen|floatformat:0|intcomma }}₫</span>
+            </div>
+            {% if don_hang.so_tien_duoc_giam > 0 %}
+            <div class="summary-row" style="color: #28a745;">
+                <span>Giảm giá ({{ don_hang.ma_voucher|default:"Voucher" }}):</span>
+                <span>-{{ don_hang.so_tien_duoc_giam|floatformat:0|intcomma }}₫</span>
+            </div>
+            {% endif %}
+            <div class="summary-row total">
+                <span>Tổng thanh toán:</span>
+                <span>{{ don_hang.tong_thanh_toan|floatformat:0|intcomma }}₫</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lịch sử trạng thái -->
+    {% if lich_su_trang_thai %}
+    <div class="order-detail-card">
+        <h2 class="section-title">Lịch sử trạng thái</h2>
+        
+        <div class="timeline">
+            {% for trang_thai in lich_su_trang_thai %}
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-status">{{ trang_thai.get_noi_dung_display }}</div>
+                    <div class="timeline-date">{{ trang_thai.thoi_gian|date:"d/m/Y H:i" }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Thông tin hỗ trợ -->
+    <div class="order-detail-card">
+        <div class="delivery-info">
+            <div class="delivery-title">
+                <i class="fa-solid fa-info-circle"></i> Cần hỗ trợ?
+            </div>
+            <p style="margin: 0; color: #1976d2;">
+                Nếu có bất kỳ thắc mắc nào về đơn hàng, vui lòng <a href="{% url 'Hotro:tao_yeu_cau' %}" style="color: #1976d2; font-weight: 700;">liên hệ hỗ trợ</a> để được giải đáp sớm nhất.
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

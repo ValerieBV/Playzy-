@@ -1,0 +1,524 @@
+
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ san_pham.ten_sp }} - PLAYZY{% endblock %}
+
+{% block head_css %}
+<style>
+    /* ... (CSS cũ của bạn giữ nguyên) ... */
+    .main-image img {
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        border: 1px solid #eee;
+    }
+    .thumbnail-images img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5px;
+        border: 2px solid #ddd;
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+    .thumbnail-images img:hover,
+    .thumbnail-images img.active {
+        border-color: #E96607; /* Màu cam */
+    }
+    .pdp-price {
+        color: #E96607; /* Màu cam */
+    }
+    .pdp-price-old {
+        font-size: 1.1rem;
+        text-decoration: line-through;
+        color: #999;
+    }
+    .btn-buy {
+        background: #E96607; /* Cam */
+        color: #fff !important;
+    }
+    .btn-add-cart {
+        background: #1E90FF; /* Xanh */
+        color: #fff !important;
+    }
+    .related-sidebar .price {
+        color: #1E90FF; /* Màu xanh */
+    }
+    .nav-tabs .nav-link {
+        color: #666;
+        font-weight: 600;
+    }
+    .nav-tabs .nav-link.active {
+        color: #E96607;
+        border-color: #dee2e6 #dee2e6 #fff;
+    }
+
+    /* ▼▼▼ ĐÃ XÓA CSS CHO .product-attributes ▼▼▼ */
+
+
+    /* CSS CHO TÌNH TRẠNG & MÃ SP */
+    .product-meta-info {
+        font-size: 0.95rem;
+        color: #555;
+        margin-bottom: 10px; /* Thêm khoảng cách trước giá */
+    }
+    .product-meta-info p {
+        margin-bottom: 4px;
+    }
+    .product-meta-info span {
+        font-weight: 600;
+        color: #333;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="?danh_muc={{ san_pham.danh_muc.duong_dan }}">{{ san_pham.danh_muc.ten_danh_muc }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ san_pham.ten_sp }}</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container">
+    <div class="row g-4">
+
+        <main class="col-lg-8">
+
+            <section class="row mb-4">
+
+                <div class="col-md-5 product-gallery">
+                    <div class="main-image mb-2">
+                        {% if san_pham.anh_dai_dien %}
+                        <img src="{{ san_pham.anh_dai_dien.url }}" alt="{{ san_pham.ten_sp }}" id="mainProductImage" class="img-fluid">
+                        {% else %}
+                        <img src="https://placehold.co/400x400" alt="Ảnh trống" id="mainProductImage" class="img-fluid">
+                        {% endif %}
+                    </div>
+
+                    <div class="thumbnail-images d-flex gap-2">
+                        {% if san_pham.anh_dai_dien %}
+                        <img src="{{ san_pham.anh_dai_dien.url }}" alt="Thumbnail" class="thumb active"
+                             onclick="changeImage('{{ san_pham.anh_dai_dien.url }}', this)">
+                        {% endif %}
+
+                        {% for anh in san_pham.hinh_anh_phu.all %}
+                        <img src="{{ anh.duong_dan.url }}" alt="Thumbnail" class="thumb"
+                             onclick="changeImage('{{ anh.duong_dan.url }}', this)">
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="col-md-7 product-info-details">
+                    <p class="text-muted fs-6 mb-1">{{ san_pham.danh_muc.ten_danh_muc }}</p>
+                    <h1 class="h2 fw-bold">{{ san_pham.ten_sp }}</h1>
+
+                    <div class="product-meta-info mt-2">
+                        <p>Mã sản phẩm: <span>{{ san_pham.ma_sp }}</span></p>
+                        <p>Tình trạng: <span>{{ san_pham.get_trang_thai_display }}</span></p>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <div class="mb-3">
+                        {% if san_pham.ty_le_giam_gia > 0 %}
+                            <span class="h1 fw-bolder pdp-price d-inline-block pb-2">
+                                {{ san_pham.gia_da_giam|floatformat:0 }} VNĐ
+                            </span>
+                            <span class="pdp-price-old ms-2">
+                                {{ san_pham.gia_goc|floatformat:0 }} VNĐ
+                            </span>
+                        {% else %}
+                            <span class="h1 fw-bolder pdp-price d-inline-block pb-2">
+                                {{ san_pham.gia_goc|floatformat:0 }} VNĐ
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Số lượng:</label>
+                        <div class="input-group w-auto" style="max-width: 130px;">
+                            <button class="btn btn-outline-secondary" type="button" onclick="changeQty(-1)">-</button>
+                            <input type="text" id="quantity" class="form-control text-center" value="1" min="1">
+                            <button class="btn btn-outline-secondary" type="button" onclick="changeQty(1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                         <button type="button"
+                                 id="btn-buy-now"
+                                data-url="{% url 'Muahang:mua_ngay' san_pham.ma_sp %}"  class="btn btn-buy fw-bold text-uppercase">
+                             Mua ngay
+                         </button>
+
+                         <button type="button"
+                                 id="btn-add-cart"
+                                 data-url="{% url 'Muahang:them_gio_hang' san_pham.ma_sp %}" class="btn btn-add-cart fw-bold text-uppercase">
+                             Thêm giỏ hàng
+                         </button>
+                    </div>
+
+
+                </div>
+            </section>
+
+            <section class="product-bottom-section mt-5">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description-pane" type="button" role="tab">Mô tả sản phẩm</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-pane" type="button" role="tab">Đánh giá ({{ danh_gia_list|length }})</button>
+                    </li>
+                </ul>
+                <div class="tab-content border border-top-0 p-3 rounded-bottom" id="myTabContent">
+                    <div class="tab-pane fade show active" id="description-pane" role="tabpanel">
+                        {{ san_pham.mo_ta|safe }}
+                    </div>
+                    <div class="tab-pane fade" id="reviews-pane" role="tabpanel">
+                        <div class="review-summary bg-light p-3 rounded mb-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <span class="h4 text-warning mb-0">{{ avg_rating|floatformat:1 }} <i class="fa-solid fa-star"></i></span>
+                                    <p class="mb-0 text-muted">(Dựa trên {{ danh_gia_list|length }} đánh giá)</p>
+                                </div>
+                                {% if avg_rating %}
+                                <div class="text-end">
+                                    <div class="rating-breakdown">
+                                        {% for i in "54321"|make_list %}
+                                        <div class="d-flex align-items-center gap-2 mb-1" style="font-size: 0.9rem;">
+                                            <span>{{ i }}</span>
+                                            <i class="fa-solid fa-star text-warning"></i>
+                                            <div class="progress flex-grow-1" style="height: 8px;">
+                                                {% with count=danh_gia_list|length %}
+                                                {% if count > 0 %}
+                                                    {% with rating_count=danh_gia_list|length %}
+                                                    {% widthratio danh_gia_list|length count 100 as percentage %}
+                                                    {% endwith %}
+                                                {% else %}
+                                                    {% with percentage=0 %}
+                                                    {% endwith %}
+                                                {% endif %}
+                                                {% endwith %}
+                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Form đánh giá -->
+                        {% if user.is_authenticated %}
+                        <div class="review-form-section bg-light p-4 rounded mb-4">
+                            <h5 class="mb-3">
+                                {% if user_review %}
+                                    <i class="fa-solid fa-edit"></i> Cập nhật đánh giá của bạn
+                                {% else %}
+                                    <i class="fa-solid fa-star"></i> Viết đánh giá
+                                {% endif %}
+                            </h5>
+                            <form id="reviewForm" method="post" action="{% url 'Sanpham:them_danh_gia' ma_sp=san_pham.ma_sp %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Đánh giá của bạn:</label>
+                                    <div class="rating-input">
+                                        {% for choice in danh_gia_form.diem_danh_gia %}
+                                        <div class="form-check form-check-inline">
+                                            {{ choice.tag }}
+                                            <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                                <i class="fa-solid fa-star text-warning"></i> {{ choice.choice_label }}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ danh_gia_form.binh_luan.id_for_label }}" class="form-label fw-bold">Bình luận:</label>
+                                    {{ danh_gia_form.binh_luan }}
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-paper-plane"></i> 
+                                    {% if user_review %}Cập nhật đánh giá{% else %}Gửi đánh giá{% endif %}
+                                </button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info mb-4">
+                            <i class="fa-solid fa-info-circle"></i> 
+                            Vui lòng <a href="{% url 'dangnhap' %}">đăng nhập</a> để viết đánh giá.
+                        </div>
+                        {% endif %}
+
+                        <!-- Danh sách đánh giá -->
+                        <div class="reviews-list">
+                            <h5 class="mb-3">Đánh giá từ khách hàng ({{ danh_gia_list|length }})</h5>
+                        {% for review in danh_gia_list %}
+                            <div class="review-item border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <p class="review-user fw-bold mb-1">
+                                            <i class="fa-solid fa-user-circle"></i> {{ review.ma_nguoi_dung.username }}
+                                        </p>
+                                        <small class="text-muted">
+                                            <i class="fa-solid fa-calendar"></i> {{ review.ngay_danh_gia|date:"d/m/Y H:i" }}
+                                        </small>
+                                    </div>
+                                    {% if review.ma_nguoi_dung == user %}
+                                    <span class="badge bg-primary">Đánh giá của bạn</span>
+                                    {% endif %}
+                                </div>
+                                <div class="review-rating text-warning mb-2">
+                                {% for i in "12345"|make_list %}
+                                    <i class="fa-{% if i|add:0 <= review.diem_danh_gia %}solid{% else %}regular{% endif %} fa-star"></i>
+                                {% endfor %}
+                                    <span class="text-dark ms-2">{{ review.diem_danh_gia }}/5</span>
+                                </div>
+                                {% if review.binh_luan %}
+                                <p class="review-comment mb-0">{{ review.binh_luan|linebreaks }}</p>
+                                {% else %}
+                                <p class="review-comment mb-0 text-muted fst-italic">Không có bình luận.</p>
+                                {% endif %}
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-4">
+                                <i class="fa-solid fa-star fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên đánh giá!</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <aside class="col-lg-4 related-sidebar">
+            <h3 class="text-uppercase fw-bold fs-5">Sản phẩm liên quan</h3>
+            <ul class="list-group list-group-flush">
+                {% for sp_lienquan in san_pham.san_pham_lien_quan.all %}
+                <li class="list-group-item d-flex gap-3 px-0">
+                    <a href="{% url 'Sanpham:chi_tiet_san_pham' ma_sp=sp_lienquan.ma_sp %}">
+                        {% if sp_lienquan.anh_dai_dien %}
+                        <img src="{{ sp_lienquan.anh_dai_dien.url }}" alt="{{ sp_lienquan.ten_sp }}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 5px;">
+                        {% else %}
+                        <img src="https://placehold.co/70x70" alt="Ảnh trống" style="width: 70px; height: 70px; object-fit: cover; border-radius: 5px;">
+                        {% endif %}
+                    </a>
+                    <div class="related-info">
+                        <h4 class="fs-6 mb-1">
+                            <a href="{% url 'Sanpham:chi_tiet_san_pham' ma_sp=sp_lienquan.ma_sp %}" class="text-decoration-none text-dark fw-bold">
+                                {{ sp_lienquan.ten_sp }}
+                            </a>
+                        </h4>
+
+                        {% if sp_lienquan.ty_le_giam_gia > 0 %}
+                           <p class="price fw-bold fs-5 mb-0">{{ sp_lienquan.gia_da_giam|floatformat:0 }} VNĐ</p>
+                        {% else %}
+                           <p class="price fw-bold fs-5 mb-0">{{ sp_lienquan.gia_goc|floatformat:0 }} VNĐ</p>
+                        {% endif %}
+                    </div>
+                </li>
+                {% empty %}
+                <li class="list-group-item">Không có sản phẩm liên quan.</li>
+                {% endfor %}
+            </ul>
+        </aside>
+
+    </div>
+</div>
+
+<script>
+    function changeImage(imageUrl, clickedThumb) {
+        document.getElementById('mainProductImage').src = imageUrl;
+        var thumbnails = document.querySelectorAll('.thumbnail-images .thumb');
+        thumbnails.forEach(function(thumb) {
+            thumb.classList.remove('active');
+        });
+        clickedThumb.classList.add('active');
+    }
+
+    function changeQty(amount) {
+        var qtyInput = document.getElementById('quantity');
+        var currentValue = parseInt(qtyInput.value);
+        var newValue = currentValue + amount;
+        if (newValue < 1) {
+            newValue = 1;
+        }
+        qtyInput.value = newValue;
+    }
+// --- Cẩm đã sửa - HÀM MINI CART (cải thiện xử lý lỗi và trả về Promise) ---
+    function refreshMiniCart() {
+        return fetch("{% url 'Muahang:mini_cart' %}")
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Server error');
+                }
+                return res.json();
+            })
+            .then(data => {
+                // Chèn HTML được trả về vào div chúng ta đã tạo ở base.html
+                const container = document.getElementById("mini-cart-container");
+                if (container) {
+                    container.innerHTML = data.html;
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi khi tải mini-cart:", error);
+                const container = document.getElementById("mini-cart-container");
+                if (container) {
+                    container.innerHTML = "<div class='p-3 text-danger'>Lỗi tải giỏ hàng.</div>";
+                }
+            });
+    }
+
+    // --- HÀM THÔNG BÁO (TOAST) ---
+    function showToast(message) {
+        let toast = document.createElement("div");
+        toast.classList.add("toast-add-cart");
+        toast.innerText = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+    }
+
+    // --- GẮN SỰ KIỆN KHI TRANG TẢI XONG ---
+    document.addEventListener("DOMContentLoaded", function() {
+
+        // Tải mini-cart ngay khi trang vừa mở
+        refreshMiniCart();
+
+        // Gắn sự kiện cho nút "Thêm giỏ hàng"
+        document.getElementById("btn-add-cart").addEventListener("click", function () {
+            let url = this.getAttribute("data-url");
+            let qty = document.getElementById("quantity").value;
+
+            fetch(url + `?qty=${qty}`, {
+                method: "GET",
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Server error');
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.status === "success") {
+                    // 1. Cập nhật số trên icon
+                    const cartCount = document.getElementById("cart-count");
+                    if (cartCount) {
+                        cartCount.innerText = data.total_items;
+                    }
+                    // 2. Hiển thị thông báo
+                    showToast("✅ Đã thêm sản phẩm vào giỏ hàng");
+                    // Cẩm đã sửa - 3. Làm mới mini-cart và tự động mở dropdown
+                    refreshMiniCart().then(() => {
+                        // Cẩm đã sửa - 4. Tự động mở dropdown mini cart
+                        const cartDropdownLink = document.getElementById("cartDropdownLink");
+                        if (cartDropdownLink) {
+                            // Kiểm tra xem dropdown đã được khởi tạo chưa
+                            let dropdownInstance = bootstrap.Dropdown.getInstance(cartDropdownLink);
+                            if (!dropdownInstance) {
+                                dropdownInstance = new bootstrap.Dropdown(cartDropdownLink);
+                            }
+                            // Mở dropdown
+                            dropdownInstance.show();
+                            
+                            // Cẩm đã sửa - Đảm bảo dropdown menu được hiển thị
+                            const dropdownMenu = cartDropdownLink.nextElementSibling;
+                            if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+                                dropdownMenu.classList.add('show');
+                                cartDropdownLink.setAttribute('aria-expanded', 'true');
+                            }
+                        }
+                    });
+                } else {
+                    showToast("❌ Lỗi: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi khi thêm giỏ hàng:", error);
+                showToast("❌ Lỗi kết nối. Vui lòng thử lại.");
+            });
+        });
+
+        // Gắn sự kiện cho nút "Mua ngay"
+        document.getElementById("btn-buy-now").addEventListener("click", function () {
+            let url = this.getAttribute("data-url");
+            let qty = document.getElementById("quantity").value;
+            window.location.href = url + `?qty=${qty}`;
+        });
+
+        // Xử lý form đánh giá (AJAX)
+        const reviewForm = document.getElementById("reviewForm");
+        if (reviewForm) {
+            reviewForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(reviewForm);
+                const submitBtn = reviewForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang gửi...';
+                
+                fetch(reviewForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showToast('✅ ' + data.message);
+                        // Reload trang sau 1 giây để cập nhật đánh giá
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showToast('❌ ' + data.message);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('❌ Có lỗi xảy ra. Vui lòng thử lại.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                });
+            });
+        }
+    });
+</script>
+
+<style>
+.toast-add-cart {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #1E90FF;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    animation: fadeInOut 2.4s ease;
+    z-index: 9999;
+}
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(10px); }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'baocao/css/baocao_doanhthu.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block page_title %}
+<h2>Báo cáo doanh thu</h2>
+{% endblock %}
+
+{% block content %}
+<div class="report-container">
+
+    <div class="metrics-row">
+        <div class="metric-card">
+            <span class="label">Khách hàng</span>
+            <span id="khach" class="value">...</span>
+        </div>
+        <div class="metric-card">
+            <span class="label">Đơn hàng</span>
+            <span id="don" class="value">...</span>
+        </div>
+        <div class="metric-card">
+            <span class="label">Doanh thu</span>
+            <span id="doanhthu" class="value">...</span>
+        </div>
+        <div class="metric-card">
+            <span class="label">Lợi nhuận</span>
+            <span id="loinhuan" class="value">...</span>
+        </div>
+    </div>
+
+    <div class="chart-section">
+        <h3>Thống kê doanh thu</h3>
+        <canvas id="lineChart" height="100"></canvas>
+    </div>
+
+    <div class="chart-section">
+        <h3>Top sản phẩm bán chạy</h3>
+        <canvas id="barChart" height="100"></canvas>
+    </div>
+
+</div>
+
+<script>
+async function loadBaoCao() {
+
+    let res = await fetch("{% url 'baocao:doanhthu_api' %}");
+    let data = await res.json();
+
+    document.getElementById("khach").innerText = data.tong_khach_hang;
+    document.getElementById("don").innerText = data.so_don_hang;
+
+    document.getElementById("doanhthu").innerText =
+        new Intl.NumberFormat("vi-VN").format(data.tong_doanh_thu) + " đ";
+
+    document.getElementById("loinhuan").innerText =
+        new Intl.NumberFormat("vi-VN").format(data.loi_nhuan) + " đ";
+
+    // ===== Line Chart =====
+    const ctx1 = document.getElementById("lineChart");
+    new Chart(ctx1, {
+        type: "line",
+        data: {
+            labels: data.time_series.map(x => x.label),
+            datasets: [{
+                label: "Doanh thu",
+                data: data.time_series.map(x => x.value),
+                borderColor: "#1e90ff",
+                fill: true,
+                tension: 0.4
+            }]
+        }
+    });
+
+    // ===== Bar Chart =====
+    const ctx2 = document.getElementById("barChart");
+    new Chart(ctx2, {
+        type: "bar",
+        data: {
+            labels: data.top_products.map(x => x.ten),
+            datasets: [{
+                label: "Số lượng",
+                data: data.top_products.map(x => x.so_luong),
+                backgroundColor: "#ff9933"
+            }]
+        }
+    });
+}
+
+loadBaoCao();
+</script>
+
+{% endblock %}

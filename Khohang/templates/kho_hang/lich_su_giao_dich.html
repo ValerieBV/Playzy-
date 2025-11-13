@@ -1,0 +1,122 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@400;600;700&display=swap');
+    body, input, select, button, table, th, td, label, h1, h2, h3, h4, h5, h6, p, div, span {
+    font-family: 'Baloo Bhai 2', sans-serif !important;
+}
+
+/* Giữ nguyên font icon của Jazzmin */
+.fa, .fas, .far, .fal, .fab, .fa-solid, .fa-regular, .fa-brands {
+    font-family: "Font Awesome 5 Free" !important;
+    font-weight: 900;
+}
+
+
+    .content-wrapper { background-color: #f4f7fa; }
+    .breadcrumb { font-size: 0.95em; color: #555; margin-bottom: 20px; }
+    .breadcrumb strong { color: #E96607; }
+
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .page-header h1 { color: #333; font-weight: 700; font-size: 2rem; }
+    .btn-create { background-color: #1E90FF; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+    .filter-container { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .filter-form { display: flex; flex-wrap: wrap; gap: 20px; }
+    .filter-form .form-group { display: flex; flex-direction: column; }
+    .filter-form label { margin-bottom: 5px; color: #333; font-size: 14px; }
+    .filter-form input, .filter-form select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #f9f9f9; width: 180px; }
+    .btn-search { background: #28a745; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; align-self: flex-end; font-weight: bold; }
+
+    .table-container { background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 15px; text-align: center; border-bottom: 1px solid #eee; }
+    thead th { background: #1E90FF; color: white; font-weight: bold; }
+    tbody tr:hover { background-color: #f5f5f5; }
+    .status { padding: 5px 10px; border-radius: 12px; font-size: 0.9em; color: #fff; font-weight: bold; }
+    .status-import { background: #28a745; }
+    .status-export { background: #dc3545; }
+    .status-adjust { background: #ffc107; color: #000; }
+  </style>
+
+  <div class="breadcrumb">
+    <span>Quản lý kho hàng</span> &gt; <strong>Lịch sử giao dịch</strong>
+  </div>
+
+  <div class="page-header">
+    <h1>Lịch sử giao dịch</h1>
+    <a href="{% url 'Khohang:them_giao_dich' %}" class="btn-create">
+      <i class="fas fa-plus"></i> Tạo giao dịch
+    </a>
+  </div>
+
+  <div class="filter-container">
+    <form method="get" class="filter-form">
+      <div class="form-group">
+        <label for="ma_giao_dich">Mã giao dịch</label>
+        <input type="text" name="ma_giao_dich" value="{{ request.GET.ma_giao_dich }}">
+      </div>
+      <div class="form-group">
+        <label for="loai_giao_dich">Loại giao dịch</label>
+        <select name="loai_giao_dich">
+          <option value="">Tất cả</option>
+          <option value="NHAP" {% if request.GET.loai_giao_dich == 'NHAP' %}selected{% endif %}>Nhập kho</option>
+          <option value="XUAT" {% if request.GET.loai_giao_dich == 'XUAT' %}selected{% endif %}>Xuất kho</option>
+          <option value="DIEU_CHINH" {% if request.GET.loai_giao_dich == 'DIEU_CHINH' %}selected{% endif %}>Điều chỉnh</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="tu_ngay">Từ ngày</label>
+        <input type="date" name="tu_ngay" value="{{ request.GET.tu_ngay }}">
+      </div>
+      <div class="form-group">
+        <label for="den_ngay">Đến ngày</label>
+        <input type="date" name="den_ngay" value="{{ request.GET.den_ngay }}">
+      </div>
+      <button type="submit" class="btn-search"><i class="fas fa-search"></i> Tìm kiếm</button>
+    </form>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Mã giao dịch</th>
+          <th>Sản phẩm</th>
+          <th>Loại giao dịch</th>
+          <th>Số lượng</th>
+          <th>Thời gian</th>
+          <th>Ghi chú</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for gd in lich_su_giao_dich %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ gd.ma_giao_dich }}</td>
+          <td>{{ gd.ma_sp.ten_sp }}</td>
+          <td>
+            {% if gd.loai_giao_dich == 'NHAP' %}
+              <span class="status status-import">Nhập kho</span>
+            {% elif gd.loai_giao_dich == 'XUAT' %}
+              <span class="status status-export">Xuất kho</span>
+            {% else %}
+              <span class="status status-adjust">Điều chỉnh</span>
+            {% endif %}
+          </td>
+          <td>{{ gd.so_luong_thay_doi }}</td>
+          <td>{{ gd.thoi_gian_thuc_hien|date:"d/m/Y H:i" }}</td>
+          <td>{{ gd.ghi_chu|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-muted">Không có giao dịch nào.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

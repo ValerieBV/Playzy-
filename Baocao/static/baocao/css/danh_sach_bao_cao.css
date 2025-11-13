@@ -1,0 +1,39 @@
+/* baocao.css */
+.report-panel { max-width:1000px; margin:0 auto; }
+.report-panel-header h3 { text-align:center; color:#f36607; margin:0 0 10px 0; font-size:18px; }
+
+/* filter card */
+.filter-card { background:#f2f5f9; border:1px solid #dfe7ef; padding:14px; margin-bottom:18px; border-radius:6px; }
+.filter-card h4 { margin:0 0 8px 0; color:#333; font-size:14px; }
+.filter-form { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
+.form-row { display:flex; flex-direction:column; gap:6px; width:200px; }
+.form-row label { font-size:12px; color:#666; }
+.form-row input[type="text"], .form-row input[type="date"] { padding:8px; border-radius:6px; border:1px solid #cfdbe8; background:#fff; }
+
+/* form actions */
+.form-actions { display:flex; gap:8px; align-items:center; }
+
+/* table card */
+.table-card { background:#fff; border:1px solid #d9e6f8; padding:0; border-radius:6px; overflow:hidden; }
+.report-table { width:100%; border-collapse:collapse; font-size:14px; }
+.report-table thead th { background:#1ea6ff; color:#fff; padding:10px; text-align:left; font-weight:700; }
+.report-table tbody td { padding:12px; border-bottom:1px solid #e9eef6; vertical-align:middle; color:#333; }
+.report-table tbody tr:nth-child(even) { background:#f7fbff; }
+
+/* action links */
+.actions a { margin-right:8px; text-decoration:none; padding:6px 10px; border-radius:6px; font-size:13px; }
+.action-view { background:#2f80ed; color:#fff; }
+.action-delete { background:#ff5a5a; color:#fff; }
+
+/* no data */
+.no-data { text-align:center; padding:18px; color:#888; }
+
+/* responsive */
+@media (max-width:1000px){
+  .page { flex-direction:column; }
+  .sidebar{ width:100%; order:2; }
+  .content{ order:1; }
+  .filter-form { gap:8px; }
+  .form-row { width:100%; }
+  .report-panel { padding:8px; }
+}

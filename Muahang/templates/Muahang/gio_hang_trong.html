@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Section: Reviews -->
+<section class="reviews">
+  <h2 class="section-heading">A terrific piece of praise</h2>
+  <div class="review">
+    <h3>Name</h3>
+    <p>Description</p>
+  </div>
+
+  <h2 class="section-heading">A fantastic bit of feedback</h2>
+  <div class="review">
+    <h3>Name</h3>
+    <p>Description</p>
+  </div>
+
+  <h2 class="section-heading">A genuinely glowing review</h2>
+  <div class="review">
+    <h3>Name</h3>
+    <p>Description</p>
+  </div>
+
+  <div class="buttons">
+    <button class="btn-primary">Button</button>
+    <button class="btn-secondary">Secondary button</button>
+  </div>
+</section>
+
+<!-- Section: New Products -->
+<section class="new-products">
+  <h2 class="section-heading">SẢN PHẨM MỚI VỀ</h2>
+  <div class="sub-heading">
+    <span>TIN TỨC</span>
+    <a href="#" class="see-more">Xem thêm</a>
+  </div>
+
+  <div class="product-list">
+    <div class="product">
+      <h3>The Werewolves of Millers Hollow Characters</h3>
+      <p>455.000đ</p>
+      <button>Xem chi tiết</button>
+    </div>
+
+    <div class="product">
+      <h3>Taco Cat Goat Cheese Pizza</h3>
+      <p>379.000đ</p>
+      <button>Xem chi tiết</button>
+    </div>
+
+    <div class="product">
+      <h3>Ngôi Làng Ma Sói Miller Hollow</h3>
+      <p>1.700.000đ</p>
+      <button>Xem chi tiết</button>
+    </div>
+
+    <div class="product">
+      <h3>Tera Nova (Hàng mới về)</h3>
+      <p>2.079.000đ</p>
+      <button>Xem chi tiết</button>
+    </div>
+
+    <div class="product">
+      <h3>Throw Throw Burrito Original Edition</h3>
+      <p>949.000đ</p>
+      <button>Xem chi tiết</button>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <p><strong>MUA NGAY ĐỂ NHẬN VOUCHER LÊN ĐẾN 40% NHÂN NGÀY 20.10</strong></p>
+    <button class="btn-buy-now">MUA NGAY</button>
+  </div>
+</section>
+
+<!-- Section: News -->
+<section class="news">
+  <article>
+    <p>‘Ngày mai nắng về’ là dự án thiện nguyện của toàn thể khách hàng yêu quý PlayZy Game...</p>
+  </article>
+  <article>
+    <p>Bộ bài Uno là một trong những sản phẩm được yêu chuộng nhất tại cửa hàng PlayZy Game...</p>
+  </article>
+  <article>
+    <p>Nói đến trò chơi dân gian hội tụ những nhà đầu tư tài ba không thể thiếu bộ Cờ Tỷ Phú...</p>
+  </article>
+  <article>
+    <p>Chơi cùng người thân - gia đình là một trong những thước phim tuyệt hảo nhất...</p>
+  </article>
+  <article>
+    <p>Khi quá nhiều bộn bề cuộc sống, thời gian dành cho con cái ngày càng giảm đi...</p>
+  </article>
+</section>
+
+<!-- Section: Empty Cart -->
+<section class="cart-section">
+  <h4>GIỎ HÀNG</h4>
+  <div class="empty-cart">
+    <img src="{% static 'Muahang/empty_cart.png' %}" alt="Giỏ hàng trống" class="empty-cart-img">
+    <p>OOPSS... Giỏ hàng của bạn hiện đang trống!</p>
+    <p>Thêm sản phẩm để bắt đầu trải nghiệm mua sắm.</p>
+    <a href="{% url 'home' %}" class="btn-continue">TIẾP TỤC MUA SẮM</a>
+  </div>
+</section>
+
+{% endblock %}

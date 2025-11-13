@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="cart-with-items">
+  <h2>GIỎ HÀNG</h2>
+
+  {% if items.exists %}
+  <ul class="cart-items">
+    {% for item in items %}
+    <li class="cart-item">
+      <img src="{{ item.san_pham.hinh_anh.url }}" alt="{{ item.san_pham.ten }}">
+      <div class="item-info">
+        <div class="item-name">{{ item.san_pham.ten }}</div>
+        <div class="item-quantity">
+          <!-- Giảm số lượng -->
+          <form method="POST" action="{% url 'Muahang:update_quantity' item.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" name="action" value="decrease">-</button>
+          </form>
+          <span>{{ item.so_luong }}</span>
+          <!-- Tăng số lượng -->
+          <form method="POST" action="{% url 'Muahang:update_quantity' item.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" name="action" value="increase">+</button>
+          </form>
+        </div>
+        <div class="item-price">{{ item.thanh_tien }}đ</div>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <div class="cart-total">
+    <strong>Tổng tiền:</strong> {{ giohang.tong_tien }}đ
+  </div>
+
+  <a href="{% url 'Muahang:dat_hang' %}" class="btn-checkout">Xác nhận đặt hàng</a>
+
+  {% endif %}
+</section>
+
+{% endblock %}

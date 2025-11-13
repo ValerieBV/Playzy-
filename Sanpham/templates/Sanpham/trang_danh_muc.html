@@ -1,0 +1,387 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Danh mục sản phẩm{% endblock %}
+
+{% block head_css %}
+<style>
+    /* ... (Toàn bộ CSS cũ của bạn giữ nguyên) ... */
+    .sidebar-widget .widget-title {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 900;
+        font-size: 1.1rem;
+        color: #E96607;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 8px;
+    }
+    .category-widget .nav-link {
+        font-family: 'Baloo Bhai', sans-serif;
+        background-color: #f0f6ff;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 6px;
+        border-radius: 5px;
+        border: 1px solid #cfe2ff;
+        padding: 8px 12px;
+        font-size: 0.95rem;
+    }
+    .category-widget .nav-link.active {
+        background-color: #1E90FF;
+        color: #fff;
+        border-color: #1E90FF;
+    }
+    .filter-widget .filter-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #444;
+        margin-bottom: 10px;
+        margin-top: 20px;
+    }
+    .filter-widget .form-check-label {
+        font-size: 0.9rem;
+    }
+    .filter-widget .price-range-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 5px;
+    }
+    .player-filter-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .player-filter-group .btn-check-label {
+        display: inline-block;
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: 1px solid #b6d4fe;
+        border-radius: 4px;
+        background-color: #e6f2ff;
+        color: #0d6efd;
+        cursor: pointer;
+    }
+    .player-filter-group .btn-check {
+        display: none;
+    }
+    .player-filter-group .btn-check:checked + .btn-check-label {
+        background-color: #0d6efd;
+        color: #fff;
+        border-color: #0d6efd;
+    }
+    .btn-filter-submit {
+        width: 100%;
+        background: #E96607;
+        color: #fff;
+        font-weight: 700;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+    .product-image-link {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .product-image-link img {
+        height: 270px;
+        width: 100%;
+        object-fit: cover;
+    }
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #E96607;
+        color: #fff;
+        padding: 4px 8px;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        z-index: 2;
+    }
+    .buy-now-overlay {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background: #E96607;
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+    }
+    .product-card-custom:hover .buy-now-overlay {
+        opacity: 0.95;
+        transform: translateY(0);
+    }
+    .product-card-custom .card-body {
+        padding: 1rem;
+    }
+    .product-card-custom .card-title a {
+        color: #333;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 48px;
+    }
+    .product-card-custom .card-title a:hover {
+        color: #E96607;
+    }
+    .product-card-custom .product-price .price-new {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #E96607;
+    }
+    .product-card-custom .product-price .price-old {
+        font-size: 0.9rem;
+        text-decoration: line-through;
+        color: #999;
+        margin-left: 8px;
+    }
+    .product-card-custom .product-price .price-original {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #E96607;
+    }
+    .pagination .page-link {
+        color: #1E90FF;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #1E90FF;
+        border-color: #1E90FF;
+        color: #fff;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #999;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: transparent; padding-left: 0;">
+            <li class="breadcrumb-item"><a href="{% url 'Sanpham:trang_danh_muc' %}">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'Sanpham:trang_danh_muc' %}">Danh mục</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {% if selected_danh_muc %}
+                    {{ selected_danh_muc.ten_danh_muc }}
+                {% else %}
+                    Tất cả sản phẩm
+                {% endif %}
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container mb-5">
+    <div class="row g-4">
+
+        <aside class="col-lg-3">
+
+            <form action="{% url 'Sanpham:trang_danh_muc' %}" method="GET" id="filter-form">
+
+                {% if query %}
+                    <input type="hidden" name="q" value="{{ query }}">
+                {% endif %}
+
+                {% if selected_danh_muc %}
+                     <input type="hidden" name="danh_muc" value="{{ selected_danh_muc.duong_dan }}">
+                {% endif %}
+
+                <input type="hidden" name="sort" id="sort-input" value="{{ sort_option|default:'default' }}">
+
+
+                <div class="sidebar-widget category-widget mb-4">
+                    <h5 class="widget-title">Danh mục sản phẩm</h5>
+                    <div class="nav flex-column nav-pills">
+                        {% for dm in danh_sach_danh_muc %}
+                        <a href="?danh_muc={{ dm.duong_dan }}"
+                           class="nav-link {% if selected_danh_muc.ma_danh_muc == dm.ma_danh_muc %}active{% endif %}">
+                           {{ dm.ten_danh_muc }}
+                        </a>
+                        {% empty %}
+                        <p>(Chưa có danh mục)</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="sidebar-widget filter-widget mb-4">
+                    <h5 class="widget-title">BỘ LỌC</h5>
+                    <h6 class="filter-title">Độ tuổi</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="age_6" name="age" value="6" {% if '6' in selected_ages %}checked{% endif %}>
+                        <label class="form-check-label" for="age_6">6+</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="age_16" name="age" value="16" {% if '16' in selected_ages %}checked{% endif %}>
+                        <label class="form-check-label" for="age_16">16+</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="age_18" name="age" value="18" {% if '18' in selected_ages %}checked{% endif %}>
+                        <label class="form-check-label" for="age_18">18+</label>
+                    </div>
+                    <h6 class="filter-title mt-3">Mức giá</h6>
+                    <input type="range" class="form-range" min="0" max="10000000" step="100000" id="priceRange"
+                           value="{{ selected_price_max|default:10000000 }}">
+                    <input type="hidden" name="price_min" id="price_min" value="{{ selected_price_min|default:0 }}">
+                    <input type="hidden" name="price_max" id="price_max" value="{{ selected_price_max|default:10000000 }}">
+                    <div class="price-range-labels">
+                        <span id="priceMinLabel">0</span>
+                        <span id="priceMaxLabel">10.000.000</span>
+                    </div>
+                    <h6 class="filter-title mt-3">Số người chơi</h6>
+                    <div class="player-filter-group">
+                        <input type="checkbox" class="btn-check" id="player_2" name="players" value="2" {% if '2' in selected_players %}checked{% endif %}>
+                        <label class="btn-check-label" for="player_2">2 người</label>
+                        <input type="checkbox" class="btn-check" id="player_4" name="players" value="4" {% if '4' in selected_players %}checked{% endif %}>
+                        <label class="btn-check-label" for="player_4">4 người</label>
+                        <input type="checkbox" class="btn-check" id="player_4plus" name="players" value="tren_4" {% if 'tren_4' in selected_players %}checked{% endif %}>
+                        <label class="btn-check-label" for="player_4plus">Trên 4 người</label>
+                    </div>
+                    <button type="submit" class="btn-filter-submit">Áp dụng</button>
+                </div>
+            </form>
+        </aside>
+
+        <section class="col-lg-9">
+
+            <div class="d-flex justify-content-end mb-3 sort-bar align-items-center">
+                <i class="fa-solid fa-filter me-2" style="color: #000;"></i>
+                <label for="sort-select-display">Sắp xếp theo:</label>
+
+                <select class="form-select form-select-sm w-auto" id="sort-select-display">
+                    <option value="default" {% if sort_option == 'default' %}selected{% endif %}>Mặc định</option>
+                    <option value="price-asc" {% if sort_option == 'price-asc' %}selected{% endif %}>Giá tăng dần</option>
+                    <option value="price-desc" {% if sort_option == 'price-desc' %}selected{% endif %}>Giá giảm dần</option>
+                    <option value="newest" {% if sort_option == 'newest' %}selected{% endif %}>Mới nhất</option>
+                </select>
+                </div>
+
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for sp in danh_sach_san_pham %}
+                <div class="col">
+                    <div class="card h-100 product-card-custom">
+                        <a href="{% url 'Sanpham:chi_tiet_san_pham' ma_sp=sp.ma_sp %}" class="product-image-link">
+                            {% if sp.ty_le_giam_gia > 0 %}
+                                <div class="discount-badge">-{{ sp.ty_le_giam_gia }}%</div>
+                            {% endif %}
+                            {% if sp.anh_dai_dien %}
+                            <img src="{{ sp.anh_dai_dien.url }}" class="card-img-top" alt="{{ sp.ten_sp }}">
+                            {% else %}
+                            <img src="https://placehold.co/300x300" class="card-img-top" alt="Ảnh trống">
+                            {% endif %}
+                            <div class="buy-now-overlay">Mua ngay</div>
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'Sanpham:chi_tiet_san_pham' ma_sp=sp.ma_sp %}">
+                                    {{ sp.ten_sp }}
+                                </a>
+                            </h5>
+                            <div class="product-price">
+                                {% if sp.ty_le_giam_gia > 0 %}
+                                    <span class="price-new">{{ sp.gia_da_giam|floatformat:0 }} VNĐ</span>
+                                    <span class="price-old">{{ sp.gia_goc|floatformat:0 }} VNĐ</span>
+                                {% else %}
+                                    <span class="price-original">{{ sp.gia_goc|floatformat:0 }} VNĐ</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="col-12">Không tìm thấy sản phẩm nào phù hợp.</p>
+                {% endfor %}
+            </div>
+
+            {% if danh_sach_san_pham.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+
+                    {% if danh_sach_san_pham.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ danh_sach_san_pham.previous_page_number }}&{{ other_params }}">&laquo;</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+                    {% endif %}
+
+                    {% for i in danh_sach_san_pham.paginator.page_range %}
+                        {% if danh_sach_san_pham.number == i %}
+                        <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}&{{ other_params }}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if danh_sach_san_pham.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ danh_sach_san_pham.next_page_number }}&{{ other_params }}">&raquo;</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            </section>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const priceSlider = document.getElementById('priceRange');
+    const minLabel = document.getElementById('priceMinLabel');
+    const maxLabel = document.getElementById('priceMaxLabel');
+    const minHidden = document.getElementById('price_min');
+    const maxHidden = document.getElementById('price_max');
+    function formatCurrency(number) {
+        return new Intl.NumberFormat('vi-VN').format(number);
+    }
+    function updateLabels() {
+        const currentMaxValue = priceSlider.value;
+        const currentMinValue = 0;
+        minLabel.textContent = formatCurrency(currentMinValue);
+        maxLabel.textContent = formatCurrency(currentMaxValue);
+        minHidden.value = currentMinValue;
+        maxHidden.value = currentMaxValue;
+    }
+    updateLabels();
+    priceSlider.addEventListener('input', updateLabels);
+
+    // ▼▼▼ (SCRIPT MỚI) Thêm JS cho Sắp xếp ▼▼▼
+    const sortSelect = document.getElementById('sort-select-display'); // Lấy <select>
+    const sortInput = document.getElementById('sort-input'); // Lấy <input hidden>
+    const filterForm = document.getElementById('filter-form'); // Lấy <form>
+
+    sortSelect.addEventListener('change', function() {
+        // 1. Cập nhật giá trị của input ẩn 'sort'
+        sortInput.value = this.value;
+        // 2. Gửi form
+        filterForm.submit();
+    });
+    // ▲▲▲ (HẾT SCRIPT MỚI) ▲▲▲
+});
+</script>
+
+{% endblock %}

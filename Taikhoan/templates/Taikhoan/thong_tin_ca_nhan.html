@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  body {
+    background-color: #f8f9fa;
+  }
+
+  /* --- Vùng bao toàn trang --- */
+  .page-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px 0;
+  }
+
+  /* --- Bố cục 2 cột --- */
+  .main-wrapper {
+    display: flex;
+    width: 1200px;             /* 🔹 Giãn rộng tổng thể hơn */
+    gap: 100px;                /* 🔹 Tăng khoảng cách giữa 2 cột */
+    justify-content: flex-start;
+  }
+
+  /* --- Menu bên trái --- */
+  .sidebar {
+    background-color: #fff6ee;
+    border-radius: 10px;
+    padding: 30px 35px;
+    width: 250px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 0px;
+    height: fit-content;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .sidebar-item i {
+    margin-right: 10px;
+    font-size: 16px;
+  }
+
+  .sidebar-item.active {
+    color: #e76f00;
+    font-weight: 600;
+  }
+
+  .sidebar-item:hover {
+    color: #e76f00;
+  }
+
+  /* --- Phần nội dung bên phải --- */
+  .content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Thay center thành flex-start để đẩy sang trái */
+}
+
+  .title {
+    color: #e76f00;
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  .center-box {
+    background-color: #ffe5d0;
+    border-radius: 10px;
+    padding: 50px 60px 60px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    width: 750px;              /* 🔹 Giãn form to ra hơn một chút */
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+
+  .row {
+    display: flex;
+    gap: 20px;
+  }
+
+  .col-md-8 {
+    flex: 2;
+  }
+
+  .col-md-4 {
+    flex: 1;
+  }
+
+  /* --- Nút lưu thay đổi --- */
+  .btn-save {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 40px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    font-size: 15px;
+    transition: 0.3s;
+  }
+
+  .btn-save:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-container {
+    text-align: center;
+    margin-top: 30px;
+  }
+    /* --- Thông báo thành công --- */
+.alert-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+  border-radius: 6px;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  text-align: center;
+}
+</style>
+
+<div class="page-container">
+  <div class="main-wrapper">
+
+    <!-- 🔹 Menu bên trái -->
+
+ <div class="sidebar">
+    <a href="{% url 'thong_tin_ca_nhan' %}" class="sidebar-item {% if request.resolver_match.url_name == 'thong_tin_ca_nhan' %}active{% endif %}">
+        <i class="fa fa-user"></i> Thông tin cá nhân
+    </a>
+    <a href="{% url 'Muahang:theo_doi_don_hang' %}" class="sidebar-item {% if request.resolver_match.url_name == 'theo_doi_don_hang' %}active{% endif %}">
+       <i class="fa fa-shopping-bag"></i> Lịch sử mua hàng
+    </a>
+
+    <a href="{% url 'dangxuat' %}" class="sidebar-item {% if request.resolver_match.url_name == 'dangxuat' %}active{% endif %}">
+        <i class="fa fa-sign-out-alt"></i> Đăng xuất
+    </a>
+</div>
+
+    <!-- 🔹 Nội dung bên phải -->
+    <div class="content-wrapper">
+      <h3 class="title">Thông tin cá nhân</h3>
+
+
+      <!-- 🔹 Thông báo nếu có -->
+      {% if messages %}
+  {% for message in messages %}
+    <p style="color: green; font-weight: 500; margin-bottom: 15px;">
+      {{ message }}
+    </p>
+  {% endfor %}
+{% endif %}
+
+      <div class="center-box">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Họ và tên:</label>
+            <input type="text" class="form-control" name="ho_ten" value="{{ nguoidung.ho_ten }}">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email:</label>
+            <input type="email" class="form-control" name="email" value="{{ user.email }}">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Số điện thoại:</label>
+            <input type="text" class="form-control" name="so_dien_thoai" value="{{ nguoidung.sdt }}">
+          </div>
+
+          <div class="row">
+            <div class="col-md-8 mb-3">
+              <label class="form-label">Địa chỉ:</label>
+              <input type="text" class="form-control" name="dia_chi" value="{{ nguoidung.dia_chi }}">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Ngày sinh:</label>
+              <input type="date" class="form-control" name="ngay_sinh" value="{{ nguoidung.ngay_sinh|date:'Y-m-d' }}">
+            </div>
+          </div>
+
+          <div class="btn-container">
+            <button type="submit" class="btn-save">Lưu thay đổi</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}

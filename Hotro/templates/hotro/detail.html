@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết yêu cầu</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">PLAYZY</div>
+    <div class="menu">
+        <a href="#">Trang chủ</a>
+        <a href="{% url 'Hotro:yeu_cau_cua_toi' %}">Danh sách</a>
+    </div>
+</div>
+
+<h1 class="section-title">Chi tiết yêu cầu</h1>
+
+<div class="detail-box">
+
+    <h2>{{ request_obj.tieu_de }}</h2>
+
+    <p><b>Loại yêu cầu:</b> {{ request_obj.get_loai_yeu_cau_display }}</p>
+
+    <p><b>Trạng thái:</b> {{ request_obj.get_trang_thai_display }}</p>
+
+    <p><b>Nội dung:</b></p>
+    <p>{{ request_obj.noi_dung }}</p>
+
+</div>
+
+<div class="footer">
+    <p>© 2025 PLAYZY - Hỗ trợ khách hàng</p>
+</div>
+
+</body>
+</html>
+

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
+    }
+
+    .logout-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+    }
+
+    .logout-box {
+        background-color: #fff;
+        border-radius: 20px;
+        box-shadow: 0 0 25px rgba(255, 102, 0, 0.15);
+        padding: 60px 80px;
+        text-align: center;
+        border: 1px solid #ffe0cc;
+        width: 550px;
+    }
+
+    .logout-box h2 {
+        font-size: 30px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .logout-box h2 span:first-child {
+        color: #007bff;
+    }
+
+    .logout-box h2 span:last-child {
+        color: #ff6600;
+    }
+
+    .logout-message {
+        color: #28a745;
+        margin: 10px 0 25px 0;
+        line-height: 1.6;
+    }
+
+    .logout-message p {
+        margin: 0;
+    }
+
+    .logout-message p:first-child {
+        font-weight: 700;
+        font-size: 17px;
+    }
+
+    .logout-message p:last-child {
+        font-weight: 500;
+        font-size: 15px;
+    }
+
+    .logout-box a {
+        display: inline-block;
+        background-color: #ff6600;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 3px 0 #cc5200;
+        transition: background-color 0.3s;
+    }
+
+    .logout-box a:hover {
+        background-color: #e55c00;
+    }
+</style>
+
+<div class="logout-container">
+    <div class="logout-box">
+        <h2><span>PLAY</span><span>ZY</span></h2>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="logout-message">
+            <p>Bạn đã đăng xuất khỏi hệ thống.</p>
+            <p>Cảm ơn bạn đã sử dụng Playzy.</p>
+        </div>
+
+        <a href="{% url 'dangnhap' %}">Đăng nhập lại</a>
+    </div>
+</div>
+{% endblock %}

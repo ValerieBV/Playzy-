@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}Theo dõi đơn hàng - Playzy{% endblock %}
+{% block content %}
+
+<style>
+    .order-tracking-container {
+        max-width: 1200px;
+        margin: 130px auto 50px auto;
+        padding: 0 20px;
+    }
+    
+    .page-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: #E96607;
+        margin-bottom: 30px;
+        font-family: 'Baloo Bhai', sans-serif;
+    }
+    
+    .status-tabs {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+    
+    .tab {
+        padding: 12px 24px;
+        border: 2px solid #E96607;
+        background: #fff;
+        color: #E96607;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .tab:hover {
+        background: #fff5e6;
+    }
+    
+    .tab.active {
+        background: #E96607;
+        color: #fff;
+    }
+    
+    .order-list {
+        display: none;
+    }
+    
+    .order-list.active {
+        display: block;
+    }
+    
+    .order-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #eee;
+    }
+    
+    .order-id {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1E90FF;
+    }
+    
+    .order-date {
+        color: #999;
+        font-size: 14px;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    
+    .status-cho-xac-nhan {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-dang-giao {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .status-da-giao {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-that-bai {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .order-items {
+        margin-bottom: 20px;
+    }
+    
+    .order-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+    
+    .order-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .item-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+    
+    .item-info {
+        flex: 1;
+    }
+    
+    .item-name {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 15px;
+    }
+    
+    .item-details {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    
+    .item-price {
+        font-weight: 700;
+        color: #E96607;
+        font-size: 15px;
+    }
+    
+    .order-summary {
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+    
+    .summary-row.total {
+        font-size: 18px;
+        font-weight: 700;
+        color: #E96607;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 2px solid #eee;
+    }
+    
+    .payment-method {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        color: #666;
+        font-size: 14px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+    
+    .empty-state-icon {
+        font-size: 64px;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state-text {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    
+    .contact-note {
+        margin-top: 30px;
+        padding: 20px;
+        background: #fff3cd;
+        border-radius: 8px;
+        color: #856404;
+        font-size: 14px;
+        text-align: center;
+    }
+</style>
+
+<div class="order-tracking-container">
+    <h1 class="page-title" style="font-family: 'Roboto', sans-serif; color: #E96607;">Theo dõi đơn hàng</h1>
+    
+    <!-- Thanh chọn trạng thái -->
+    <div class="status-tabs">
+        <button class="tab active" data-tab="tat-ca">Tất cả</button>
+        <button class="tab" data-tab="cho-xac-nhan">Chờ xác nhận</button>
+        <button class="tab" data-tab="dang-giao">Đang giao</button>
+        <button class="tab" data-tab="hoan-thanh">Hoàn thành</button>
+        <button class="tab" data-tab="that-bai">Thất bại</button>
+    </div>
+    
+    <!-- Tab Tất cả -->
+    <div id="tat-ca" class="order-list active">
+        {% if tat_ca %}
+            {% for don in tat_ca %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Đơn hàng #{{ don.id }}</div>
+                        <div class="order-date">{{ don.ngay_dat|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div>
+                        {% if don.trang_thai == 'cho_xac_nhan' %}
+                            <span class="status-badge status-cho-xac-nhan">{{ don.get_trang_thai_display }}</span>
+                        {% elif don.trang_thai == 'dang_giao' %}
+                            <span class="status-badge status-dang-giao">{{ don.get_trang_thai_display }}</span>
+                        {% elif don.trang_thai == 'da_giao' %}
+                            <span class="status-badge status-da-giao">{{ don.get_trang_thai_display }}</span>
+                        {% elif don.trang_thai == 'that_bai' %}
+                            <span class="status-badge status-that-bai">{{ don.get_trang_thai_display }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    {% for item in don.items.all %}
+                    <div class="order-item">
+                        {% if item.san_pham.anh_dai_dien %}
+                            <img src="{{ item.san_pham.anh_dai_dien.url }}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.png' %}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                        {% endif %}
+                        <div class="item-info">
+                            <div class="item-name">{{ item.san_pham.ten_sp }}</div>
+                            <div class="item-details">Số lượng: {{ item.so_luong }} × {{ item.gia|floatformat:0|intcomma }}₫</div>
+                            <div class="item-price">{{ item.thanh_tien|floatformat:0|intcomma }}₫</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <span>Tạm tính:</span>
+                        <span>{{ don.tong_tien|floatformat:0|intcomma }}₫</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Phí vận chuyển:</span>
+                        <span>{{ don.phi_van_chuyen|floatformat:0|intcomma }}₫</span>
+                    </div>
+                    {% if don.so_tien_duoc_giam > 0 %}
+                    <div class="summary-row" style="color: #28a745;">
+                        <span>Giảm giá:</span>
+                        <span>-{{ don.so_tien_duoc_giam|floatformat:0|intcomma }}₫</span>
+                    </div>
+                    {% endif %}
+                    <div class="summary-row total">
+                        <span>Tổng thanh toán:</span>
+                        <span>{{ don.tong_thanh_toan|floatformat:0|intcomma }}₫</span>
+                    </div>
+                    <div class="payment-method">
+                        <i class="fa-solid fa-credit-card"></i> Phương thức: {{ don.get_payment_method_display }}
+                    </div>
+                    <div style="margin-top: 20px; text-align: right;">
+                        <a href="{% url 'Muahang:chi_tiet_don_hang' don.id %}" class="btn" style="background: #E96607; color: #fff; padding: 10px 24px; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 600;">
+                            <i class="fa-solid fa-eye"></i> Xem chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div class="empty-state-text">Bạn chưa có đơn hàng nào</div>
+                <a href="{% url 'Sanpham:trang_danh_muc' %}" class="btn" style="background: #E96607; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-block;">
+                    Tiếp tục mua sắm
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Tab Chờ xác nhận -->
+    <div id="cho-xac-nhan" class="order-list">
+        {% if cho_xac_nhan %}
+            {% for don in cho_xac_nhan %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Đơn hàng #{{ don.id }}</div>
+                        <div class="order-date">{{ don.ngay_dat|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div>
+                        <span class="status-badge status-cho-xac-nhan">{{ don.get_trang_thai_display }}</span>
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    {% for item in don.items.all %}
+                    <div class="order-item">
+                        {% if item.san_pham.anh_dai_dien %}
+                            <img src="{{ item.san_pham.anh_dai_dien.url }}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.png' %}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                        {% endif %}
+                        <div class="item-info">
+                            <div class="item-name">{{ item.san_pham.ten_sp }}</div>
+                            <div class="item-details">Số lượng: {{ item.so_luong }} × {{ item.gia|floatformat:0|intcomma }}₫</div>
+                            <div class="item-price">{{ item.thanh_tien|floatformat:0|intcomma }}₫</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="order-summary">
+                    <div class="summary-row total">
+                        <span>Tổng thanh toán:</span>
+                        <span>{{ don.tong_thanh_toan|floatformat:0|intcomma }}₫</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>Không có đơn hàng đang chờ xác nhận.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Tab Đang giao -->
+    <div id="dang-giao" class="order-list">
+        {% if dang_giao %}
+            {% for don in dang_giao %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Đơn hàng #{{ don.id }}</div>
+                        <div class="order-date">{{ don.ngay_dat|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div>
+                        <span class="status-badge status-dang-giao">{{ don.get_trang_thai_display }}</span>
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    {% for item in don.items.all %}
+                    <div class="order-item">
+                        {% if item.san_pham.anh_dai_dien %}
+                            <img src="{{ item.san_pham.anh_dai_dien.url }}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.png' %}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                        {% endif %}
+                        <div class="item-info">
+                            <div class="item-name">{{ item.san_pham.ten_sp }}</div>
+                            <div class="item-details">Số lượng: {{ item.so_luong }} × {{ item.gia|floatformat:0|intcomma }}₫</div>
+                            <div class="item-price">{{ item.thanh_tien|floatformat:0|intcomma }}₫</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="order-summary">
+                    <div class="summary-row total">
+                        <span>Tổng thanh toán:</span>
+                        <span>{{ don.tong_thanh_toan|floatformat:0|intcomma }}₫</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>Không có đơn hàng đang giao.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Tab Hoàn thành -->
+    <div id="hoan-thanh" class="order-list">
+        {% if hoan_thanh %}
+            {% for don in hoan_thanh %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Đơn hàng #{{ don.id }}</div>
+                        <div class="order-date">{{ don.ngay_dat|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div>
+                        <span class="status-badge status-da-giao">{{ don.get_trang_thai_display }}</span>
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    {% for item in don.items.all %}
+                    <div class="order-item">
+                        {% if item.san_pham.anh_dai_dien %}
+                            <img src="{{ item.san_pham.anh_dai_dien.url }}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.png' %}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                        {% endif %}
+                        <div class="item-info">
+                            <div class="item-name">{{ item.san_pham.ten_sp }}</div>
+                            <div class="item-details">Số lượng: {{ item.so_luong }} × {{ item.gia|floatformat:0|intcomma }}₫</div>
+                            <div class="item-price">{{ item.thanh_tien|floatformat:0|intcomma }}₫</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="order-summary">
+                    <div class="summary-row total">
+                        <span>Tổng thanh toán:</span>
+                        <span>{{ don.tong_thanh_toan|floatformat:0|intcomma }}₫</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>Chưa có đơn hàng hoàn thành.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Tab Thất bại -->
+    <div id="that-bai" class="order-list">
+        {% if that_bai %}
+            {% for don in that_bai %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Đơn hàng #{{ don.id }}</div>
+                        <div class="order-date">{{ don.ngay_dat|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div>
+                        <span class="status-badge status-that-bai">{{ don.get_trang_thai_display }}</span>
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    {% for item in don.items.all %}
+                    <div class="order-item">
+                        {% if item.san_pham.anh_dai_dien %}
+                            <img src="{{ item.san_pham.anh_dai_dien.url }}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.png' %}" alt="{{ item.san_pham.ten_sp }}" class="item-image">
+                        {% endif %}
+                        <div class="item-info">
+                            <div class="item-name">{{ item.san_pham.ten_sp }}</div>
+                            <div class="item-details">Số lượng: {{ item.so_luong }} × {{ item.gia|floatformat:0|intcomma }}₫</div>
+                            <div class="item-price">{{ item.thanh_tien|floatformat:0|intcomma }}₫</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="order-summary">
+                    <div class="summary-row total">
+                        <span>Tổng thanh toán:</span>
+                        <span>{{ don.tong_thanh_toan|floatformat:0|intcomma }}₫</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>Không có đơn hàng thất bại.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="contact-note">
+        <i class="fa-solid fa-info-circle"></i> Nếu có vấn đề gì về đơn hàng, vui lòng <a href="{% url 'Hotro:tao_yeu_cau' %}" style="color: #856404; font-weight: 700;">liên hệ hỗ trợ</a> để được hỗ trợ sớm nhất!
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.tab');
+    const lists = document.querySelectorAll('.order-list');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            tabs.forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            // Hide all lists
+            lists.forEach(l => {
+                l.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Show corresponding list
+            const targetTab = this.getAttribute('data-tab');
+            const targetList = document.getElementById(targetTab);
+            if (targetList) {
+                targetList.classList.add('active');
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}
+

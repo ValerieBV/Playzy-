@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Câu hỏi thường gặp - Playzy{% endblock %}
+{% block content %}
+
+<style>
+    .faq-page-container {
+        max-width: 900px;
+        margin: 130px auto 50px auto;
+        padding: 0 20px;
+    }
+    
+    .faq-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    
+    .faq-title {
+        font-size: 42px;
+        font-weight: 800;
+        color: #E96607;
+        margin-bottom: 15px;
+        font-family: 'Baloo Bhai', sans-serif;
+    }
+    
+    .faq-subtitle {
+        font-size: 16px;
+        color: #333;
+        line-height: 1.6;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .faq-accordion {
+        margin-bottom: 50px;
+    }
+    
+    .faq-item {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        background: #fff;
+        overflow: hidden;
+        transition: box-shadow 0.3s;
+    }
+    
+    .faq-item:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .faq-question {
+        padding: 20px 25px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        user-select: none;
+        transition: background 0.3s;
+    }
+    
+    .faq-question:hover {
+        background: #f8f9fa;
+    }
+    
+    .faq-question.active {
+        background: #f8f9fa;
+    }
+    
+    .faq-icon {
+        font-size: 24px;
+        color: #E96607;
+        transition: transform 0.3s;
+        font-weight: bold;
+    }
+    
+    .faq-question.active .faq-icon {
+        transform: rotate(180deg);
+    }
+    
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out, padding 0.3s;
+        padding: 0 25px;
+    }
+    
+    .faq-answer.active {
+        max-height: 500px;
+        padding: 0 25px 20px 25px;
+    }
+    
+    .faq-answer-content {
+        color: #666;
+        font-size: 15px;
+        line-height: 1.8;
+        padding-top: 10px;
+    }
+    
+    .faq-contact-section {
+        text-align: center;
+        padding: 40px 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin-top: 40px;
+    }
+    
+    .faq-contact-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .faq-contact-text {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 25px;
+    }
+    
+    .faq-contact-btn {
+        display: inline-block;
+        padding: 14px 40px;
+        background: #E96607;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background 0.3s, transform 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .faq-contact-btn:hover {
+        background: #d45a06;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(233, 102, 7, 0.3);
+        color: #fff;
+        text-decoration: none;
+    }
+</style>
+
+<div class="faq-page-container">
+    <!-- HEADER -->
+    <div class="faq-header">
+        <h1 class="faq-title">Câu hỏi thường gặp</h1>
+        <p class="faq-subtitle">
+            Những câu hỏi thường gặp về board game - Tìm hiểu ngay để có sự lựa chọn thông minh!
+        </p>
+    </div>
+
+    <!-- ACCORDION FAQ -->
+    <div class="faq-accordion">
+        {% for item in danh_sach_cau_hoi %}
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>{{ item.cau_hoi }}</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            {% if item.cau_tra_loi %}
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    {{ item.cau_tra_loi|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 40px; color: #666;">
+            <p>Hiện chưa có câu hỏi nào trong hệ thống.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- CONTACT SECTION -->
+    <div class="faq-contact-section">
+        <h2 class="faq-contact-title">Bạn có câu hỏi nào khác?</h2>
+        <p class="faq-contact-text">Xin vui lòng liên hệ với chúng tôi</p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'Hotro:tao_yeu_cau' %}" class="faq-contact-btn">Liên hệ ngay</a>
+        {% else %}
+            <a href="{% url 'dangnhap' %}" class="faq-contact-btn">Liên hệ ngay</a>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function toggleFAQ(element) {
+    const item = element.closest('.faq-item');
+    const answer = item.querySelector('.faq-answer');
+    const question = item.querySelector('.faq-question');
+    
+    // Đóng tất cả các item khác
+    document.querySelectorAll('.faq-item').forEach(otherItem => {
+        if (otherItem !== item) {
+            const otherAnswer = otherItem.querySelector('.faq-answer');
+            const otherQuestion = otherItem.querySelector('.faq-question');
+            if (otherAnswer && otherQuestion) {
+                otherAnswer.classList.remove('active');
+                otherQuestion.classList.remove('active');
+            }
+        }
+    });
+    
+    // Toggle item hiện tại
+    if (answer) {
+        answer.classList.toggle('active');
+        question.classList.toggle('active');
+    }
+}
+
+// Mở item đầu tiên mặc định (tùy chọn)
+document.addEventListener('DOMContentLoaded', function() {
+    const firstItem = document.querySelector('.faq-item');
+    if (firstItem) {
+        const firstAnswer = firstItem.querySelector('.faq-answer');
+        const firstQuestion = firstItem.querySelector('.faq-question');
+        if (firstAnswer && firstQuestion) {
+            firstAnswer.classList.add('active');
+            firstQuestion.classList.add('active');
+        }
+    }
+});
+</script>
+
+{% endblock %}

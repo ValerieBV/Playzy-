@@ -1,0 +1,86 @@
+/* CSS Chung (Header) */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    text-align: center; /* Để căn giữa nội dung giỏ hàng trống */
+}
+
+/* Container cho icon ở góc phải (nếu có) */
+.header-top {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 20px;
+    gap: 20px;
+}
+
+/* Container chứa tiêu đề lớn */
+.header-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Căn tiêu đề về bên trái */
+    padding: 10px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Tiêu đề GIỎ HÀNG */
+.tieu-de-lon-gio-hang {
+    color: #ff7f27; /* Màu cam */
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    margin-right: 5px;
+    /* Cần bỏ margin-right 5px nếu muốn tiêu đề sát vào mép trái */
+}
+
+/* Mũi tên > bên cạnh tiêu đề */
+.mui-ten-phai {
+    color: #ccc;
+    font-size: 20px;
+}
+
+/* --- */
+
+/* CSS Riêng cho Giỏ hàng trống */
+.empty-cart-content {
+    padding: 50px 20px;
+    margin-top: 50px; /* Tăng khoảng cách từ header xuống */
+}
+
+/* Tiêu đề OOPSS... */
+.tieu-de-loi {
+    color: #4a90e2; /* Màu xanh dương */
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Các dòng trạng thái "Giỏ hàng hiện đang trống" và "Không có sản phẩm nào..." */
+.trang-thai-trong, .khong-co-san-pham {
+    color: #666; /* Màu xám */
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+/* Nút TIẾP TỤC MUA SẮM */
+.nut-tiep-tuc-mua-sam {
+    display: inline-block;
+    background-color: #ff7f27; /* Màu cam đậm */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px 30px;
+    border: none;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ nhẹ */
+    transition: background-color 0.3s;
+}
+
+.nut-tiep-tuc-mua-sam:hover {
+    background-color: #e65c00; /* Màu cam tối hơn khi hover */
+}

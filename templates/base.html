@@ -1,0 +1,343 @@
+{% load static %}
+{# Cẩm đã sửa - File base.html chung cho toàn dự án, gộp từ templates/base.html và Sanpham/templates/Sanpham/base.html #}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Playzy - Vui chơi sáng tạo{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css?family=Baloo+Bhai&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Jersey+20&display=swap" rel="stylesheet" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    {% block head_css %}{% endblock %}
+
+    <style>
+        /* ... (CSS header không đổi) ... */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            padding-top: 102px;
+            font-family: 'Baloo Bhai', sans-serif; /* Giữ nguyên font của bạn */
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #4b2c20;
+        }
+        main { flex: 1; }
+        .header-container { width: 100%; height: 102px; position: fixed; top: 0; left: 0; background: #fff; z-index: 1000; border-bottom: 1px solid #ddd; }
+        .search-form { padding-left: 12px; padding-right: 12px; left: 409px; top: 25px; position: absolute; background: rgba(141.97, 199.24, 255, 0.34); border-radius: 10px; outline: 1px #1E90FF solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex; }
+        .search-form input { width: 369px; height: 26px; border: none; background: transparent; outline: none; color: #1E90FF; font-size: 16px; font-family: 'Baloo Bhai', sans-serif; }
+        .search-form input::placeholder { color: rgba(17, 149.60, 238, 0.33); }
+        .search-form button { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+        .search-form .fa-magnifying-glass { font-size: 20px; color: #1E90FF; }
+        .nav-bar { width: 100%; height: 30px; padding: 0 189px; box-sizing: border-box; left: 0px; top: 72px; position: absolute; background: #1E90FF; justify-content: space-between; align-items: center; display: inline-flex; }
+        .nav-bar a { flex-grow: 1; width: 187px; height: 30px; text-align: center; line-height: 30px; color: #F5F5F5; font-size: 18px; font-family: 'Baloo Bhai', sans-serif; font-weight: 400; text-decoration: none; }
+        .nav-bar a.active, .nav-bar a:hover { color: #E96607; }
+        .logo-text { width: 136px; height: 72px; left: 98px; top: 0px; position: absolute; font-family: 'Jersey 20', sans-serif; font-size: 60px; line-height: 72px; text-decoration: none; }
+        .logo-play { color: #1E90FF; }
+        .logo-zy { color: #E96607; }
+        .user-icons { position: absolute; right: 98px; top: 25px; display: flex; gap: 20px; align-items: center; }
+        .user-icons a { font-size: 24px; color: #1E90FF; text-decoration: none; }
+
+        /* ====== CSS FOOTER ====== */
+        footer {
+            background-color: #ffe3ca;
+            color: #ff6f00;
+            padding: 25px 0 5px 0;
+            margin-top: auto;
+            box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+            font-family: "Arial", sans-serif; /* Giữ nguyên font Arial cho footer */
+        }
+        .footer { max-width: 1150px; margin: 0 auto; padding: 0 20px; }
+        .footer-container { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; padding-bottom: 10px; }
+        .footer-column { flex: 1; min-width: 220px; margin: 5px 10px; line-height: 1.7; }
+        .footer-column .logo { font-size: 42px; font-weight: 800; color: #ff6f00; letter-spacing: 0.5px; font-family: 'Jersey 20', sans-serif; }
+        .footer-column .logo span { color: #2a8ef7; }
+
+        /* CỘT TIÊU ĐỀ */
+        footer h3 {
+            color: #ff6f00;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+
+            /* 2. SỬA FONT VÀ CỠ CHỮ CHO H3 */
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+            font-size: 18px; /* Giảm cỡ chữ để không bị tràn */
+        }
+
+        .footer-column p,
+        .footer-column a {
+            font-size: 14.5px;
+            color: #ff6f00;
+            font-weight: 600;
+            text-decoration: none;
+            font-family: "Arial", sans-serif; /* Đảm bảo chữ nhỏ vẫn là Arial */
+        }
+        .footer-column a:hover { text-decoration: underline; }
+        .social-icons a { color: #ff6f00; margin-right: 12px; font-size: 18px; transition: 0.3s; }
+        .social-icons a:hover { transform: scale(1.1); }
+        .buy-btn { display: inline-block; background: #e65c00; color: #ffffff !important; font-size: 17px; font-weight: 800; padding: 14px 60px; border-radius: 80px; text-decoration: none; text-align: center; letter-spacing: 1px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.08); transition: all 0.25s ease; }
+        .buy-btn:hover { background: #cc5200; transform: translateY(-2px); color: #ffffff !important; }
+        .footer-bottom { text-align: center; margin-top: 5px; }
+        .footer-bottom hr { border: none; border-top: 1.2px solid #2a8ef7; width: 96%; margin: 0 auto 6px auto; }
+        .footer-bottom p { font-size: 13.8px; font-weight: 700; color: #ff6f00; }
+        @media (max-width: 768px) {
+            .footer-container { flex-direction: column; }
+            .footer-column { width: 100%; margin-bottom: 10px; }
+            .buy-btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-container">
+    <form action="{% url 'Sanpham:trang_danh_muc' %}" method="GET" class="search-form">
+        <button type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <input type="text" name="q" placeholder="Tìm kiếm sản phẩm..." value="{{ query|default:'' }}">
+    </form>
+    <div class="nav-bar">
+        <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Trang chủ</a>
+        <a href="{% url 'gioi_thieu' %}" {% if request.resolver_match.url_name == 'gioi_thieu' %}class="active"{% endif %}>Giới thiệu</a>
+        <a href="{% url 'Sanpham:trang_danh_muc' %}" {% if request.resolver_match.url_name == 'trang_danh_muc' %}class="active"{% endif %}>Danh mục</a>
+        <a href="{% url 'Tintuc:trang_tintuc' %}" {% if request.resolver_match.url_name == 'trang_tintuc' %}class="active"{% endif %}>Tin tức</a>
+        <a href="{% url 'Lienhe:cau_hoi' %}" {% if request.resolver_match.url_name == 'cau_hoi' %}class="active"{% endif %}>Liên hệ</a>
+    </div>
+    <div class="user-icons">
+        {% if user.is_authenticated %}
+            <!-- Đã đăng nhập: Hiển thị menu người dùng -->
+    <div class="dropdown">
+                <a href="#" class="text-decoration-none" role="button" id="userDropdownLink"
+                   data-bs-toggle="dropdown" aria-expanded="false"
+                   style="font-size: 24px; color: #1E90FF;">
+                    <i class="fa-solid fa-user"></i>
+                    <span style="font-size: 14px; margin-left: 5px; color: #1E90FF;">{{ user.username }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdownLink"
+                    style="min-width: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <li><a class="dropdown-item" href="{% url 'thong_tin_ca_nhan' %}">
+                        <i class="fa-solid fa-user-circle"></i> Thông tin cá nhân</a></li>
+                    <li><a class="dropdown-item" href="{% url 'Muahang:theo_doi_don_hang' %}">
+                        <i class="fa-solid fa-history"></i> Lịch sử mua hàng</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'dangxuat' %}">
+                        <i class="fa-solid fa-sign-out-alt"></i> Đăng xuất</a></li>
+                </ul>
+            </div>
+        {% else %}
+            <!-- Chưa đăng nhập: Hiển thị link đăng nhập/đăng ký -->
+            <a href="{% url 'dangnhap' %}" style="font-size: 16px; color: #1E90FF; text-decoration: none; margin-right: 15px;">
+                <i class="fa-solid fa-sign-in-alt"></i> Đăng nhập
+            </a>
+            <a href="{% url 'dangky' %}" style="font-size: 16px; color: #E96607; text-decoration: none;">
+                <i class="fa-solid fa-user-plus"></i> Đăng ký
+            </a>
+        {% endif %}
+
+        <!-- Giỏ hàng -->
+        <div class="dropdown" style="margin-left: 15px;">
+        <a href="{% url 'Muahang:giohang' %}"
+           class="position-relative text-decoration-none"
+           role="button"
+           id="cartDropdownLink"
+           data-bs-toggle="dropdown"
+           aria-expanded="false"
+           style="font-size: 24px; color: #1E90FF;">
+
+            <i class="fa-solid fa-cart-shopping"></i>
+
+            <span id="cart-count" class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill"
+                  style="font-size: 12px;">
+                {{ cart_total_items|default:0 }}
+            </span>
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-end p-0"
+             aria-labelledby="cartDropdownLink"
+             data-bs-auto-close="outside"
+             style="width: 320px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);max-height: 1000px; overflow-y: auto;"
+             onclick="event.stopPropagation();">
+
+            <div id="mini-cart-container" onclick="event.stopPropagation();">
+                <div class="text-center p-3"><span class="spinner-border spinner-border-sm"></span> Đang tải...</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+    <a href="{% url 'home' %}" class="logo-text">
+        <span class="logo-play">PLAY</span><span class="logo-zy">ZY</span>
+    </a>
+</div>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer>
+    <div class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="logo"><span>PLAY</span>ZY</div>
+            </div>
+            <div class="footer-column">
+                <h3>THÔNG TIN LIÊN HỆ</h3>
+                <p><i class="fa-solid fa-phone"></i> <b>Hotline:</b> 0374691634</p>
+                <p><i class="fa-solid fa-location-dot"></i> <b>Địa chỉ:</b> 71 Ngũ Hành Sơn</p>
+                <p><i class="fa-solid fa-envelope"></i> <b>Email:</b> <a href="mailto:playzyltw@gmail.com">playzyltw@gmail.com</a></p>
+            </div>
+            <div class="footer-column">
+                <h3>CHÍNH SÁCH</h3>
+                <a href="#">Khuyến mãi</a><br>
+                <a href="{% url 'chinh_sach_bao_mat' %}">Chính sách bảo mật thông tin</a><br>
+                <a href="#">Hướng dẫn mua hàng</a><br>
+                <a href="#">Xem bản đồ đường đi</a>
+            </div>
+            <div class="footer-column">
+                <h3>THEO DÕI CHÚNG TÔI</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+                <a href="{% url 'Sanpham:trang_danh_muc' %}" class="buy-btn">MUA NGAY</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <hr>
+            <p>PLAYZY - rất nhiều trò chơi phong phú, nâng tầm giải trí và gắn kết mọi người với niềm vui bất tận</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<script>
+    /**
+     * HÀM 1: LÀM MỚI MINI-CART (Code bạn đã thêm)
+     * Đã được bọc lại chính xác trong thẻ <script>
+     */
+    // Cẩm đã sửa - Cải thiện hàm refreshMiniCart để trả về Promise và chạy lại script trong HTML mới
+    function refreshMiniCart() {
+        return fetch("{% url 'Muahang:mini_cart' %}")
+            .then(res => {
+                // Kiểm tra xem server có trả về lỗi không
+                if (res.ok) {
+                    return res.json();
+                }
+                throw new Error('Lỗi mạng hoặc server.');
+            })
+            .then(data => {
+                // Chèn HTML được trả về vào div
+                const container = document.getElementById("mini-cart-container");
+                if (container) {
+                    container.innerHTML = data.html;
+                    
+                    // Cẩm đã sửa - Chạy lại các script trong HTML mới được chèn vào
+                    const scripts = container.querySelectorAll('script');
+                    scripts.forEach(function(oldScript) {
+                        const newScript = document.createElement('script');
+                        Array.from(oldScript.attributes).forEach(attr => {
+                            newScript.setAttribute(attr.name, attr.value);
+                        });
+                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                        oldScript.parentNode.replaceChild(newScript, oldScript);
+                    });
+                    
+                    // Đảm bảo event listener được attach lại sau khi load content mới
+                    setTimeout(function() {
+                        const container = document.getElementById('mini-cart-container');
+                        if (container) {
+                            // Re-attach event listener cho nút cộng/trừ
+                            const qtyButtons = container.querySelectorAll('.qty-btn');
+                            qtyButtons.forEach(function(btn) {
+                                btn.addEventListener('click', function(e) {
+                                    e.stopPropagation();
+                                });
+                            });
+                        }
+                    }, 100);
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi khi tải mini-cart:", error);
+                const container = document.getElementById("mini-cart-container");
+                if (container) {
+                    container.innerHTML = "<div class='p-3 text-danger'>Lỗi tải giỏ hàng.</div>";
+                }
+            });
+    }
+
+    /**
+     * HÀM 2: THÊM GIỎ HÀNG (Code cũ của bạn)
+     * Đã được gộp vào đây và CẬP NHẬT để gọi refreshMiniCart()
+     */
+    function themGioHang(productId) {
+        fetch(`/gio-hang/them/${productId}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}", // Cần có CSRF token
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                // 1. Cập nhật số trên icon
+                document.getElementById("cart-count").innerText = data.total_items;
+
+                // 2. Tải lại nội dung mini-cart (ĐÃ THÊM)
+                refreshMiniCart();
+
+                // 3. Thông báo (giữ nguyên alert của bạn)
+                alert(data.message);
+            } else {
+                alert("Lỗi: " + data.message);
+            }
+        })
+        .catch(error => {
+             console.error("Lỗi khi thêm giỏ hàng:", error);
+             alert("Lỗi kết nối. Không thể thêm giỏ hàng.");
+        });
+    }
+
+    /**
+    /**
+ * HÀM 3: TỰ ĐỘNG CHẠY KHI TẢI TRANG (ĐÃ THÊM)
+ * Tự động tải nội dung mini-cart khi bạn mở bất kỳ trang nào.
+ */
+document.addEventListener("DOMContentLoaded", function() {
+    refreshMiniCart();
+
+    // 🔸 THÊM: Hiệu ứng đổi màu icon giỏ hàng khi mở / đóng dropdown
+    const cartLink = document.getElementById("cartDropdownLink");
+    const cartIcon = document.querySelector("#cartDropdownLink i.fa-cart-shopping");
+
+    if (cartLink && cartIcon) {
+        cartLink.addEventListener("show.bs.dropdown", function() {
+            cartIcon.style.color = "#E96607"; // cam khi mở
+        });
+        cartLink.addEventListener("hide.bs.dropdown", function() {
+            cartIcon.style.color = "#1E90FF"; // xanh khi đóng
+        });
+    }
+});
+
+</script>
+</body>
+</html>

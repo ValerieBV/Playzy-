@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin - Danh sách yêu cầu hỗ trợ - Playzy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhai&display=swap" rel="stylesheet">
+  <link href="{% static 'css/main.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <header class="site-header admin-header">
+    <div class="site-brand">PLAYZY (Admin)</div>
+    <nav class="main-nav">
+      <a href="/">Trang chủ</a>
+      <a href="/admin/">Trang quản trị</a>
+      <a href="{% url 'Hotro:trang_chu' %}">Hỗ trợ</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Danh sách yêu cầu hỗ trợ (Quản trị)</h1>
+
+    <div class="card">
+      <div style="overflow:auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Mã yêu cầu</th>
+              <th>Loại</th>
+              <th>Tiêu đề</th>
+              <th>Khách hàng</th>
+              <th>Người xử lý</th>
+              <th>Trạng thái</th>
+              <th>Ngày tạo</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for yc in requests %}
+            <tr>
+              <td>{{ yc.ma_yeu_cau }}</td>
+
+              <td>{{ yc.get_loai_yeu_cau_display }}</td>
+
+              <td style="max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                {{ yc.tieu_de }}
+              </td>
+
+              <td>
+                {{ yc.khach_hang.get_full_name|default:yc.khach_hang.username }}
+              </td>
+
+              <td>
+                {% if yc.nguoi_xu_ly %}
+                  {{ yc.nguoi_xu_ly.get_full_name|default:yc.nguoi_xu_ly.username }}
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+
+              <td>{{ yc.get_trang_thai_display }}</td>
+
+              <td>{{ yc.ngay_tao|date:"d/m/Y" }}</td>
+
+              <td>
+                <a class="btn-small" href="{% url 'Hotro:chi_tiet_yeu_cau' yc.pk %}">Chi tiết</a>
+
+                <a class="btn-small" href="{% url 'admin:Hotro_yeucauhotro_change' yc.pk %}">
+                  Sửa (admin)
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+              <tr><td colspan="8">Không có yêu cầu nào.</td></tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="logo">PLAYZY</div>
+    </div>
+  </footer>
+</body>
+</html>
+

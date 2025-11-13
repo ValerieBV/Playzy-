@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Câu hỏi thường gặp - Playzy</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Jersey+20&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Baloo+Bhai&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Baloo+Bhaina&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Baloo+Bhai+2&display=swap" rel="stylesheet" />
+
+    <!-- CSS -->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="v464_2048">
+        <div class="v218_2571"><span class="v218_2572">PLAYZY</span></div>
+        <div class="name"></div>
+        <div class="v218_2574"></div>
+        <div class="v218_2575"></div>
+        <div class="v218_2576"></div>
+        <div class="v218_2577"></div>
+        <div class="v218_2578"></div>
+
+        <!-- Navbar -->
+        <div class="v218_2579">
+            <span class="v218_2580">Trang chủ</span>
+            <span class="v218_2581">Giới thiệu</span>
+            <span class="v218_2582">Danh mục</span>
+            <span class="v218_2583">Tin tức</span>
+            <a href="#" class="v218_2584">Liên hệ</a>
+        </div>
+
+        <!-- Decorative elements -->
+        <div class="v218_2585">
+            <div class="v218_2586"></div>
+            <div class="v218_2587"></div>
+        </div>
+
+        <div class="v218_2588">
+            <div class="v218_2589"></div>
+            <div class="v218_2590"></div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="v218_2597">
+            <div class="v218_2598">
+                <span class="v218_2599">Câu hỏi thường gặp</span>
+                <span class="v218_2600">
+                    Những câu hỏi thường gặp từ khách hàng – Giúp bạn tìm thông tin dễ dàng và nhanh chóng!
+                </span>
+            </div>
+
+            <div class="v218_2601">
+                <div class="v218_2602"></div>
+            </div>
+
+            <!-- Hiển thị danh sách câu hỏi từ models -->
+            {% for item in danh_sach_cau_hoi %}
+            <div class="v218_2644">
+                <div class="v218_2645">
+                    <span class="v218_2653">{{ item.cau_hoi }}</span>
+
+                    {% if item.cau_tra_loi %}
+                        <p style="font-size:14px; margin-top:6px;">
+                            {{ item.cau_tra_loi }}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p style="text-align:center; color:#666;">
+                Hiện chưa có câu hỏi nào trong hệ thống.
+            </p>
+            {% endfor %}
+
+            <div class="v218_2622">
+                <div class="v218_2623">
+                    <span class="v218_2624">Bạn có câu hỏi nào khác?</span>
+                    <span class="v218_2625">Xin vui lòng liên hệ với chúng tôi</span>
+                </div>
+                <div class="name"></div>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="v464_2329">
+            <div class="v464_2330"></div>
+            <div class="v464_2331"></div>
+        </div>
+
+        <div class="v486_1739">
+            <div class="v486_1740">
+                <div class="v486_1741">
+                    <div class="v486_1742">
+                        <span class="v486_1756">PLAYZY</span>
+                        <span class="v486_1757">THÔNG TIN LIÊN HỆ</span>
+                        <span class="v486_1758">Theo dõi chúng tôi</span>
+                        <span class="v486_1759">Hotline :</span>
+                        <span class="v486_1760">0374691634</span>
+                        <span class="v486_1761">
+                            PLAYZY - Nhiều sản phẩm giải trí phong phú, nâng tầm trải nghiệm và gắn kết mọi người.
+                        </span>
+                        <span class="v486_1762">71 Ngũ Hành Sơn</span>
+                        <span class="v486_1763">playzyltw@gmail.com</span>
+                        <span class="v486_1764">Địa chỉ :</span>
+                        <span class="v486_1765">Khuyến mãi</span>
+                        <span class="v486_1766">Chính sách bảo mật thông tin</span>
+                        <span class="v486_1767">Hướng dẫn mua hàng</span>
+                        <span class="v486_1768">Xem bản đồ đường đi</span>
+                        <span class="v486_1769">Email :</span>
+                        <span class="v486_1770">CHÍNH SÁCH</span>
+
+                        <div class="v486_1771"></div>
+                        <div class="v486_1772">
+                            <div class="v486_1773"></div>
+                            <div class="v486_1774"></div>
+                            <div class="v486_1775"></div>
+                            <div class="v486_1776"></div>
+                        </div>
+
+                        <div class="v486_1777"></div>
+                        <div class="v486_1778"></div>
+                        <span class="v486_1779">MUA NGAY</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

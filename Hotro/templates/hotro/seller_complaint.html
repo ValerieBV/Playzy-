@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Danh sách khiếu nại - Người bán - Playzy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhai&display=swap" rel="stylesheet">
+  <link href="{% static 'css/main.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="site-brand">PLAYZY</div>
+    <nav class="main-nav">
+      <a href="/">Trang chủ</a>
+      <a href="#">Quản lý</a>
+      <a href="#">Đơn hàng</a>
+      <a href="#">Tin tức</a>
+      <a href="{% url 'Hotro:trang_chu' %}">Hỗ trợ</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Danh sách khiếu nại</h1>
+
+    <div class="card">
+      <div style="overflow:auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Mã khiếu nại</th>
+              <th>Loại yêu cầu</th>
+              <th>Nội dung</th>
+              <th>Ngày gửi</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for yc in requests %}
+              {% if yc.loai_yeu_cau == 'khiem_nai' %}
+              <tr>
+                <!-- Mã yêu cầu -->
+                <td>{{ yc.ma_yeu_cau }}</td>
+
+                <!-- Loại yêu cầu -->
+                <td>{{ yc.get_loai_yeu_cau_display }}</td>
+
+                <!-- Tiêu đề -->
+                <td style="max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                  {{ yc.tieu_de }}
+                </td>
+
+                <!-- Ngày gửi -->
+                <td>{{ yc.ngay_tao|date:"d/m/Y" }}</td>
+
+                <!-- Trạng thái -->
+                <td>{{ yc.get_trang_thai_display }}</td>
+
+                <!-- Chi tiết -->
+                <td>
+                  <a class="btn-small" href="{% url 'Hotro:chi_tiet_yeu_cau' yc.pk %}">
+                    Xem chi tiết
+                  </a>
+                </td>
+              </tr>
+              {% endif %}
+            {% empty %}
+              <tr><td colspan="6">Không có khiếu nại nào.</td></tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="logo">PLAYZY</div>
+    </div>
+  </footer>
+
+</body>
+</html>

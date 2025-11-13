@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}Thanh toán {{ payment_name }} - Playzy{% endblock %}
+{% block content %}
+
+<style>
+    .payment-qr-container {
+        max-width: 800px;
+        margin: 130px auto 50px auto;
+        padding: 0 20px;
+    }
+    
+    .payment-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .payment-header {
+        margin-bottom: 30px;
+    }
+    
+    .payment-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+    }
+    
+    .payment-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #E96607;
+        margin-bottom: 10px;
+        font-family: 'Tilt Warp', sans-serif;
+    }
+    
+    .payment-subtitle {
+        color: #666;
+        font-size: 16px;
+    }
+    
+    .qr-section {
+        background: #f8f9fa;
+        border-radius: 16px;
+        padding: 30px;
+        margin: 30px 0;
+    }
+    
+    .qr-code-wrapper {
+        display: inline-block;
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .qr-code-wrapper img {
+        display: block;
+        width: 250px;
+        height: 250px;
+    }
+    
+    .qr-instruction {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-top: 20px;
+    }
+    
+    .order-info {
+        background: #fff3cd;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 30px 0;
+        text-align: left;
+    }
+    
+    .order-info-title {
+        font-weight: 700;
+        color: #856404;
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+    
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+    
+    .info-label {
+        color: #666;
+    }
+    
+    .info-value {
+        font-weight: 700;
+        color: #E96607;
+    }
+    
+    .total-row {
+        border-top: 2px solid #ddd;
+        padding-top: 15px;
+        margin-top: 15px;
+        font-size: 20px;
+    }
+    
+    .action-buttons {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-payment {
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    
+    .btn-confirm {
+        background: #28a745;
+        color: #fff;
+    }
+    
+    .btn-confirm:hover {
+        background: #218838;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+    
+    .btn-cancel {
+        background: #6c757d;
+        color: #fff;
+    }
+    
+    .btn-cancel:hover {
+        background: #5a6268;
+        color: #fff;
+    }
+    
+    .demo-notice {
+        background: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        text-align: left;
+    }
+    
+    .demo-notice-title {
+        font-weight: 700;
+        color: #1976d2;
+        margin-bottom: 8px;
+    }
+    
+    .demo-notice-text {
+        color: #1976d2;
+        font-size: 14px;
+        margin: 0;
+    }
+</style>
+
+<div class="payment-qr-container">
+    <div class="payment-card">
+        <div class="payment-header">
+            {% if don_hang.payment_method == 'MOMO' %}
+                <div class="payment-icon" style="color: #A50064;">💰</div>
+            {% elif don_hang.payment_method == 'ZALOPAY' %}
+                <div class="payment-icon" style="color: #0068FF;">💳</div>
+            {% elif don_hang.payment_method == 'VNPAY' %}
+                <div class="payment-icon" style="color: #E50000;">🏦</div>
+            {% endif %}
+            <h1 class="payment-title">Thanh toán {{ payment_name }}</h1>
+            <p class="payment-subtitle">Quét mã QR để thanh toán</p>
+        </div>
+        
+        <div class="qr-section">
+            <div class="qr-code-wrapper">
+                <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code thanh toán">
+            </div>
+            <div class="qr-instruction">
+                <p><strong>Hướng dẫn thanh toán:</strong></p>
+                <ol style="text-align: left; display: inline-block; margin-top: 10px;">
+                    <li>Mở ứng dụng {{ payment_name }} trên điện thoại</li>
+                    <li>Chọn chức năng "Quét mã QR"</li>
+                    <li>Quét mã QR ở trên</li>
+                    <li>Xác nhận thanh toán</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="order-info">
+            <div class="order-info-title">
+                <i class="fa-solid fa-receipt"></i> Thông tin đơn hàng
+            </div>
+            <div class="info-row">
+                <span class="info-label">Mã đơn hàng:</span>
+                <span class="info-value">#{{ don_hang.id }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tạm tính:</span>
+                <span class="info-value">{{ don_hang.tong_tien|floatformat:0|intcomma }}₫</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Phí vận chuyển:</span>
+                <span class="info-value">{{ don_hang.phi_van_chuyen|floatformat:0|intcomma }}₫</span>
+            </div>
+            {% if don_hang.so_tien_duoc_giam > 0 %}
+            <div class="info-row" style="color: #28a745;">
+                <span class="info-label">Giảm giá:</span>
+                <span class="info-value">-{{ don_hang.so_tien_duoc_giam|floatformat:0|intcomma }}₫</span>
+            </div>
+            {% endif %}
+            <div class="info-row total-row">
+                <span class="info-label">Tổng thanh toán:</span>
+                <span class="info-value">{{ tong_thanh_toan|floatformat:0|intcomma }}₫</span>
+            </div>
+        </div>
+        
+        <div class="demo-notice">
+            <div class="demo-notice-title">
+                <i class="fa-solid fa-info-circle"></i> Lưu ý
+            </div>
+            <p class="demo-notice-text">
+                Đây là trang thanh toán demo. QR code được tạo ngẫu nhiên và chỉ mang tính chất minh họa. 
+                Bạn có thể bấm "Đã thanh toán" để hoàn tất đơn hàng.
+            </p>
+        </div>
+        
+        <div class="action-buttons">
+            <form method="post" action="{% url 'Muahang:xac_nhan_thanh_toan' don_hang.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-payment btn-confirm">
+                    <i class="fa-solid fa-check-circle"></i> Đã thanh toán
+                </button>
+            </form>
+            <a href="{% url 'Muahang:theo_doi_don_hang' %}" class="btn-payment btn-cancel">
+                <i class="fa-solid fa-times"></i> Hủy
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

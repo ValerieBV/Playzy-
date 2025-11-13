@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Playzy Admin{% endblock %}</title>
+
+  <!-- base css -->
+  <link rel="stylesheet" href="{% static 'baocao/css/base.css' %}" />
+
+  <!-- page css -->
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">PLAY<span class="logo-orange">ZY</span></div>
+      <div class="search">
+        <input type="text" placeholder="Tìm kiếm..." />
+      </div>
+      <div class="nav-icons">
+        <span class="icon">🔔</span>
+        <span class="icon">👤</span>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trang chủ</a>
+      <a href="#">Quản lý</a>
+      <a href="#">Đơn hàng</a>
+      <a href="#">Tin tức</a>
+      <a href="#" class="active">Báo cáo</a>
+    </nav>
+  </header>
+
+  <div class="page">
+    <aside class="sidebar">
+      <div class="brand">Playzy</div>
+      <ul class="side-menu">
+        <li>Quản lý người dùng<ul><li>Tất cả người dùng</li></ul></li>
+        <li>Quản lý sản phẩm<ul><li>Tất cả sản phẩm</li><li>Thêm sản phẩm</li></ul></li>
+        <li>Quản lý đơn hàng<ul><li>Tất cả đơn hàng</li></ul></li>
+        <li>Hỗ trợ khách hàng</li>
+        <li class="active">Thống kê - báo cáo<ul><li>Báo cáo</li><li>Báo cáo doanh thu</li></ul></li>
+      </ul>
+    </aside>
+
+    <main class="content">
+      <div class="content-inner">
+        {% block page_title %}
+        <h1>Tiêu đề trang</h1>
+        {% endblock %}
+
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

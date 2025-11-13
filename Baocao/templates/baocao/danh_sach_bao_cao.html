@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Báo cáo - Danh sách{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'baocao/css/baocao.css' %}" />
+{% endblock %}
+
+{% block page_title %}
+<h2 class="page-title">Báo cáo</h2>
+{% endblock %}
+
+{% block content %}
+<section class="report-panel">
+  <div class="report-panel-header">
+    <h3>Báo cáo</h3>
+  </div>
+
+  <div class="filter-card">
+    <h4>Thông tin chung</h4>
+    <form method="get" class="filter-form">
+      <div class="form-row">
+        <label>Mã báo cáo</label>
+        <input type="text" name="ma_bc" value="{{ request.GET.ma_bc }}">
+      </div>
+      <div class="form-row">
+        <label>Loại báo cáo</label>
+        <input type="text" name="loai_bc" value="{{ request.GET.loai_bc }}">
+      </div>
+      <div class="form-row">
+        <label>Ngày bắt đầu</label>
+        <input type="date" name="from" value="{{ request.GET.from }}">
+      </div>
+      <div class="form-row">
+        <label>Ngày kết thúc</label>
+        <input type="date" name="to" value="{{ request.GET.to }}">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Lọc</button>
+        <a href="{% url 'baocao:list' %}" class="btn btn-secondary">Reset</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-card">
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>Mã BC</th>
+          <th>Loại báo cáo</th>
+          <th>Ngày báo cáo</th>
+          <th>Ghi chú</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in baocaos %}
+        <tr>
+          <td>{{ b.ma_bc }}</td>
+          <td>{{ b.loai_bc }}</td>
+          <td>{{ b.ngay_bc|date:"d/m/Y" }}</td>
+          <td>{{ b.ghi_chu }}</td>
+          <td class="actions">
+            <a class="action-view" href="{% url 'baocao:detail' b.id %}">Xem</a>
+            <a class="action-delete" href="{% url 'baocao:delete' b.id %}">Xóa</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="no-data">Không có dữ liệu</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

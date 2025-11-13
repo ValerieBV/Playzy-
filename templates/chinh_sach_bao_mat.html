@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Chính sách bảo mật{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css?family=Baloo+Bhai+2&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Tilt+Warp&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    background-color: #fff;
+    font-family: 'Baloo Bhai 2', sans-serif;
+  }
+
+  .about-section {
+    max-width: 1200px;
+    margin: 40px auto 100px auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    line-height: 1.8;
+  }
+
+  .about-text {
+    flex: 1;
+    text-align: justify;
+  }
+
+  .about-text h1 {
+    color: #E96607;
+    font-family: 'Tilt Warp', cursive;
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+
+  .about-text h2 {
+    color: #E96607;
+    font-size: 20px;
+    margin-top: 30px;
+  }
+
+  .about-text h3 {
+    color: #1E90FF;
+    font-size: 18px;
+    margin-top: 18px;
+  }
+
+  .about-text ul {
+    list-style: disc;
+    margin-left: 25px;
+    margin-bottom: 15px;
+  }
+
+  .about-text p {
+    font-size: 16px;
+    color: #222;
+    margin-bottom: 10px;
+  }
+
+  .about-images {
+    flex: 0 0 35%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    margin-top: 80px;
+  }
+
+  .about-images img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transform: rotate(4deg);
+    transition: all 0.3s ease;
+  }
+
+  .about-images img:nth-child(even) {
+    transform: rotate(-4deg);
+  }
+
+  .about-images img:hover {
+    transform: scale(1.02);
+  }
+
+  .section-title {
+    text-align: center;
+    color: #E96607;
+    font-family: 'Tilt Warp', cursive;
+    font-size: 22px;
+    margin-top: 30px;
+  }
+
+  @media (max-width: 992px) {
+    .about-section {
+      flex-direction: column;
+      align-items: center;
+    }
+    .about-images {
+      flex: unset;
+      margin-top: 30px;
+      width: 80%;
+    }
+  }
+</style>
+
+<div class="section-title">
+  🎮 TRÒ CHƠI HAY HO - CÓ PLAYZY GAME LO 🎮
+</div>
+
+<div class="about-section">
+  <div class="about-text">
+    <h1>Chính sách bảo mật</h1>
+    <p>Tại Playzy, chúng tôi cam kết bảo vệ thông tin cá nhân và các giao dịch của khách hàng một cách an toàn nhất. Chính sách này mô tả cách chúng tôi thu thập, sử dụng và bảo mật thông tin của bạn khi bạn truy cập và mua sắm trên website của chúng tôi.</p>
+
+    <h2>1. Mục đích & Phạm vi thu thập thông tin</h2>
+    <p>Chúng tôi thu thập thông tin khách hàng nhằm mục đích quản lý tài khoản, xử lý đơn hàng và cung cấp dịch vụ hỗ trợ khách hàng. Các thông tin bao gồm:</p>
+    <ul>
+      <li>Thông tin đăng ký tài khoản: tên đăng nhập, email, số điện thoại.</li>
+      <li>Thông tin đặt hàng: tên, địa chỉ, số điện thoại giao hàng.</li>
+      <li>Thông tin giao dịch: lịch sử mua hàng, phương thức thanh toán.</li>
+      <li>Thông tin hỗ trợ: dữ liệu liên hệ qua chat, email hoặc điện thoại.</li>
+    </ul>
+
+    <h2>2. Phạm vi sử dụng thông tin</h2>
+    <p>Thông tin cá nhân của khách hàng được sử dụng cho các mục đích sau:</p>
+    <ul>
+      <li>Xử lý đơn hàng, xác nhận và cập nhật trạng thái giao hàng.</li>
+      <li>Quản lý tài khoản và hỗ trợ khách hàng.</li>
+      <li>Gửi thông báo về sản phẩm, khuyến mãi, hoặc chính sách mới (nếu khách hàng đồng ý).</li>
+    </ul>
+
+    <h2>3. Bảo mật thông tin khách hàng</h2>
+    <p>Playzy cam kết đảm bảo rằng thông tin cá nhân và các giao dịch của khách hàng được bảo vệ an toàn tuyệt đối. Chúng tôi không chia sẻ thông tin của bạn cho bên thứ ba không liên quan, trừ khi có yêu cầu từ cơ quan nhà nước có thẩm quyền.</p>
+
+    <h2>4. Quyền của khách hàng</h2>
+    <ul>
+      <li>Truy cập, chỉnh sửa và cập nhật thông tin cá nhân.</li>
+      <li>Yêu cầu xóa hoặc ngừng sử dụng dữ liệu cá nhân.</li>
+      <li>Liên hệ Playzy để được hỗ trợ qua hotline hoặc email.</li>
+    </ul>
+
+    <h2>5. Thông tin liên hệ</h2>
+    <p>Nếu bạn có thắc mắc về chính sách bảo mật, vui lòng liên hệ:</p>
+    <ul>
+      <li>📞 Hotline: 0374 691 634</li>
+      <li>📧 Email: playzyltw@gmail.com</li>
+      <li>🌐 Website: <a href="https://playzy.com" style="color:#E96607;">playzy.com</a></li>
+    </ul>
+  </div>
+
+  <div class="about-images">
+    <img src="{% static 'chinh_sach_bao_mat_images/v485_2622.png' %}" alt="Boardgame 1">
+    <img src="{% static 'chinh_sach_bao_mat_images/v485_2623.png' %}" alt="Boardgame 2">
+    <img src="{% static 'chinh_sach_bao_mat_images/v485_2624.png' %}" alt="Boardgame 3">
+  </div>
+</div>
+{% endblock %}

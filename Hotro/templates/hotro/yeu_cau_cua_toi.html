@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Yêu cầu của tôi - Playzy{% endblock %}
+{% block content %}
+
+<style>
+    .my-requests-container {
+        max-width: 1000px;
+        margin: 130px auto 50px auto;
+        padding: 0 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    
+    .page-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: #E96607;
+        font-family: 'Tilt Warp', sans-serif;
+    }
+    
+    .create-btn {
+        padding: 12px 24px;
+        background: #E96607;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.3s;
+    }
+    
+    .create-btn:hover {
+        background: #d45a06;
+        color: #fff;
+        text-decoration: none;
+    }
+    
+    .requests-table-container {
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        overflow-x: auto;
+    }
+    
+    .requests-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .requests-table thead {
+        background: #f8f9fa;
+    }
+    
+    .requests-table th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 700;
+        color: #333;
+        border-bottom: 2px solid #ddd;
+        font-size: 15px;
+    }
+    
+    .requests-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        color: #555;
+        font-size: 14px;
+    }
+    
+    .requests-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    
+    .status-cho-xu-ly {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-dang-xu-ly {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .status-da-xu-ly {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-dong {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .type-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #e7f3ff;
+        color: #1E90FF;
+    }
+    
+    .view-btn {
+        padding: 8px 16px;
+        background: #1E90FF;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.3s;
+    }
+    
+    .view-btn:hover {
+        background: #0066cc;
+        color: #fff;
+        text-decoration: none;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+    
+    .empty-state-icon {
+        font-size: 64px;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state-text {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="my-requests-container">
+    <div class="page-header">
+        <h1 class="page-title">Yêu cầu của tôi</h1>
+        <a href="{% url 'Hotro:tao_yeu_cau' %}" class="create-btn">
+            <i class="fa-solid fa-plus"></i> Tạo yêu cầu mới
+        </a>
+    </div>
+    
+    <div class="requests-table-container">
+        {% if danh_sach %}
+        <table class="requests-table">
+            <thead>
+                <tr>
+                    <th>Mã yêu cầu</th>
+                    <th>Loại yêu cầu</th>
+                    <th>Tiêu đề</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for yc in danh_sach %}
+                <tr>
+                    <td>
+                        <strong style="color: #1E90FF;">{{ yc.ma_yeu_cau|default:"Đang tạo..." }}</strong>
+                    </td>
+                    <td>
+                        <span class="type-badge">{{ yc.get_loai_yeu_cau_display }}</span>
+                    </td>
+                    <td>
+                        <div style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            {{ yc.tieu_de }}
+                        </div>
+                    </td>
+                    <td>
+                        {% if yc.trang_thai == 'cho_xu_ly' %}
+                            <span class="status-badge status-cho-xu-ly">{{ yc.get_trang_thai_display }}</span>
+                        {% elif yc.trang_thai == 'dang_xu_ly' %}
+                            <span class="status-badge status-dang-xu-ly">{{ yc.get_trang_thai_display }}</span>
+                        {% elif yc.trang_thai == 'da_xu_ly' %}
+                            <span class="status-badge status-da-xu-ly">{{ yc.get_trang_thai_display }}</span>
+                        {% elif yc.trang_thai == 'dong' %}
+                            <span class="status-badge status-dong">{{ yc.get_trang_thai_display }}</span>
+                        {% else %}
+                            <span class="status-badge">{{ yc.get_trang_thai_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ yc.ngay_tao|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'Hotro:chi_tiet_yeu_cau' yc.pk %}" class="view-btn">
+                            <i class="fa-solid fa-eye"></i> Xem chi tiết
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fa-solid fa-inbox"></i>
+            </div>
+            <div class="empty-state-text">Bạn chưa có yêu cầu nào</div>
+            <a href="{% url 'Hotro:tao_yeu_cau' %}" class="create-btn">
+                <i class="fa-solid fa-plus"></i> Tạo yêu cầu đầu tiên
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+

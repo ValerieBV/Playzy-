@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dashboard Người bán - Playzy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhai&display=swap" rel="stylesheet">
+  <link href="{% static 'css/main.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="site-brand">PLAYZY</div>
+    <nav class="main-nav">
+      <a href="/">Trang chủ</a>
+      <a href="#">Quản lý</a>
+      <a href="#">Đơn hàng</a>
+      <a href="#">Tin tức</a>
+      <a href="{% url 'Hotro:trang_chu' %}">Hỗ trợ</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Danh sách yêu cầu (Người bán)</h1>
+
+    <div class="card">
+
+      <!-- Bộ lọc -->
+      <form method="get" class="filter-row" style="margin-bottom:12px;display:flex;gap:12px;align-items:center;">
+        <label>Trạng thái:
+          <select name="status" style="padding:8px;border-radius:6px;border:1px solid #ddd">
+            <option value="">Tất cả</option>
+            <option value="cho_xu_ly">Chưa xử lý</option>
+            <option value="dang_xu_ly">Đang xử lý</option>
+            <option value="da_xu_ly">Đã xử lý</option>
+            <option value="dong">Đóng</option>
+          </select>
+        </label>
+        <button class="btn-small" type="submit">Lọc</button>
+        <div style="margin-left:auto;">
+          <a class="btn-small" href="{% url 'Hotro:tao_yeu_cau' %}">Tạo yêu cầu mới</a>
+        </div>
+      </form>
+
+      <div style="overflow:auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Mã yêu cầu</th>
+              <th>Loại</th>
+              <th>Tiêu đề</th>
+              <th>Khách hàng</th>
+              <th>Ngày tạo</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for yc in requests %}
+            <tr>
+              <!-- Mã yêu cầu -->
+              <td>{{ yc.ma_yeu_cau }}</td>
+
+              <!-- Loại -->
+              <td>{{ yc.get_loai_yeu_cau_display }}</td>
+
+              <!-- Tiêu đề -->
+              <td style="max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                {{ yc.tieu_de }}
+              </td>
+
+              <!-- Khách hàng -->
+              <td>{{ yc.khach_hang.get_full_name|default:yc.khach_hang.username }}</td>
+
+              <!-- Ngày tạo -->
+              <td>{{ yc.ngay_tao|date:"d/m/Y" }}</td>
+
+              <!-- Trạng thái -->
+              <td>{{ yc.get_trang_thai_display }}</td>
+
+              <!-- Hành động -->
+              <td>
+                <a class="btn-small" href="{% url 'Hotro:chi_tiet_yeu_cau' yc.pk %}">Chi tiết</a>
+
+                <form action="{% url 'Hotro:doi_trang_thai' yc.pk %}" method="post" style="display:inline">
+                  {% csrf_token %}
+                  <select name="trang_thai" style="padding:6px;border-radius:6px;border:1px solid #ddd;">
+                    <option value="cho_xu_ly" {% if yc.trang_thai == 'cho_xu_ly' %}selected{% endif %}>Chưa xử lý</option>
+                    <option value="dang_xu_ly" {% if yc.trang_thai == 'dang_xu_ly' %}selected{% endif %}>Đang xử lý</option>
+                    <option value="da_xu_ly" {% if yc.trang_thai == 'da_xu_ly' %}selected{% endif %}>Đã xử lý</option>
+                    <option value="dong" {% if yc.trang_thai == 'dong' %}selected{% endif %}>Đóng</option>
+                  </select>
+                  <button class="btn-small" type="submit">Lưu</button>
+                </form>
+              </td>
+
+            </tr>
+            {% empty %}
+            <tr><td colspan="7">Không có yêu cầu nào.</td></tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="logo">PLAYZY</div>
+    </div>
+  </footer>
+
+</body>
+</html>
+

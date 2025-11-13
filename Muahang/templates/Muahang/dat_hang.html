@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container my-4">
+     <h2 class="text-center mb-4" style="color: #E96607; font-size: 35px; font-family: 'Roboto', sans-serif;">ĐẶT HÀNG</h2>
+
+    <form method="post" action="{% url 'Muahang:dat_hang' %}">
+        {% csrf_token %}
+        <div class="row">
+
+            <!-- Thông tin khách hàng -->
+            <div class="col-md-6">
+                <div class="card mb-4 p-3 shadow-sm" style="border-radius:10px; border:1px solid #FF8C00;">
+                    <h4 class="fw-bold mb-3"style="color: #E96607;">THÔNG TIN KHÁCH HÀNG</h4>
+                    <hr class="mt-0 mb-3">
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Lựa chọn hình thức thanh toán -->
+                <div class="card mb-4 p-3 shadow-sm" style="border-radius:10px; border:1px solid #FFD7B0; background-color: #FFF8F0;">
+                    <h4 class="fw-bold mb-3"style="color: #E96607;">HÌNH THỨC THANH TOÁN</h4>
+                    {% for method, label, img in payment_methods %}
+                    <div class="form-check d-flex align-items-center mb-3">
+                        <input class="form-check-input mt-0 me-2" type="radio" name="payment_method" id="{{ method }}" value="{{ method }}"
+                               {% if selected_payment_method == method %}checked{% else %}{% if method == 'COD' %}{% if not selected_payment_method %}checked{% endif %}{% endif %}{% endif %}>
+                        <label class="form-check-label d-flex align-items-center" for="{{ method }}">
+                            <img src="{% static 'img/'|add:img %}" width="30" class="me-3 rounded">
+                            <span class="small fw-bold">{{ label }}</span>
+                        </label>
+                    </div>
+                    <hr>
+                    {% endfor %}
+                </div>
+
+                <!-- Voucher -->
+                <div class="card p-3 shadow-sm mb-4" style="border-radius:10px; border:1px solid #FF8C00;">
+                    <h4 class="fw-bold mb-3"style="color: #E96607;">CHƯƠNG TRÌNH KHUYẾN MÃI</h4>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" name="ma_voucher" placeholder="Nhập mã giảm giá" value="{{ ma_voucher }}">
+                        <button class="btn btn-primary" type="submit" name="apply_voucher" value="1">ÁP DỤNG</button>
+                    </div>
+                    {% if show_promo %}
+                        <div class="text-success small mb-2">Mã giảm giá tự động đã được áp dụng!</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Giỏ hàng và tổng thanh toán -->
+            <div class="col-md-6">
+                <div class="card mb-4 p-3 shadow-sm" style="border-radius:10px; border:1px solid #FF8C00;">
+                    <h4 class="fw-bold mb-3 text-center"style="color: #E96607;">GIỎ HÀNG CỦA BẠN</h4>
+                    <hr class="mt-0 mb-3">
+                    {% if giohang.items.exists %}
+                        {% for item in giohang.items.all %}
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                                <div class="d-flex align-items-center">
+                                    {% if item.san_pham.hinh_anh %}
+                                        <img src="{{ item.san_pham.hinh_anh.url }}" alt="{{ item.san_pham.ten }}" width="60" height="60" class="me-3 rounded shadow-sm">
+                                    {% endif %}
+                                    <div class="flex-grow-1">
+                                        <p class="mb-0 fw-bold small">{{ item.san_pham.ten }}</p>
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-secondary me-2">@ {{ item.so_luong }}</span>
+                                            <small class="text-muted">Số lượng: {{ item.so_luong }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-danger fw-bold mb-0">{{ item.thanh_tien|floatformat:0 }}đ</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center">Giỏ hàng trống.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Tổng đơn -->
+                <div class="card p-3 shadow-sm" style="border-radius:10px; border:1px solid #FF8C00;">
+                    <div class="d-flex justify-content-between mb-2">
+                        <p class="mb-0 small">Tổng giá trị đơn</p>
+                        <p class="mb-0 small fw-bold">{{ giohang.tong_tien|floatformat:0 }}đ</p>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <p class="mb-0 small">Phí vận chuyển</p>
+                        <p class="mb-0 small fw-bold">{{ phi_van_chuyen|floatformat:0 }}đ</p>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <p class="mb-0 small">Mã giảm giá</p>
+                        <p class="mb-0 small fw-bold text-danger">{{ giam_gia|floatformat:0 }}đ</p>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5 class="mb-0 fw-bold">Tổng thanh toán</h5>
+                        <h5 class="mb-0 fw-bold text-danger">{{ tong_thanh_toan|floatformat:0 }}đ</h5>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="text-center my-4">
+            <div class="text-center my-4">
+                <button type="submit" class="btn btn-lg px-5 py-2 fw-bold" style="border-radius:8px; background-color: #E96607; color: white; border: 2px solid #E96607;">XÁC NHẬN ĐẶT HÀNG</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+{% endblock %}

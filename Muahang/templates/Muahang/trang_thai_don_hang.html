@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ tieu_de }}</title>
+  <link rel="stylesheet" href="{% static 'Muahang/trang_thai_don_hang.css' %}">
+</head>
+<body>
+  <header>
+    <h1>PLAYZY</h1>
+    <nav>
+      <a href="#">Trang chủ</a>
+      <a href="#">Giới thiệu</a>
+      <a href="#">Danh mục</a>
+      <a href="#">Tin tức</a>
+      <a href="#">Liên hệ</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="danh-sach-don">
+      <h2>{{ tieu_de }}</h2>
+
+      {% if danh_sach_don %}
+        {% for don in danh_sach_don %}
+          <div class="don-hang">
+            <h3>{{ don.san_pham.ten }}</h3>
+            <p>Số lượng: {{ don.so_luong }}</p>
+            <p>Giá: {{ don.san_pham.gia|floatformat:0 }}đ</p>
+            <p>Thành tiền: {{ don.tong_tien|floatformat:0 }}đ</p>
+
+            {% if trang_thai == 'thanh-cong' %}
+              <p class="trang-thai">Đơn hàng đã được nhận bởi người nhận</p>
+            {% else %}
+              <p class="trang-thai">Người nhận từ chối nghe máy</p>
+            {% endif %}
+
+            <div class="lien-he">
+              <h4>LIÊN HỆ PLAYZY</h4>
+              <p>Nếu có vấn đề gì về đơn hàng vui lòng <strong>‘Liên hệ shop’</strong> để được hỗ trợ sớm nhất nhé!</p>
+              <a href="{% url 'muahang:sanpham' %}" class="btn">MUA NGAY</a>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>Không có đơn hàng nào thuộc trạng thái này.</p>
+      {% endif %}
+    </section>
+  </main>
+
+  <footer>
+    <h4>PLAYZY</h4>
+    <p>Hotline: 0374691634</p>
+    <p>Email: playzyltw@gmail.com</p>
+    <p>Địa chỉ: 71 Ngũ Hành Sơn</p>
+  </footer>
+</body>
+</html>

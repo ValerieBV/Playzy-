@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import BaiViet
 
-# Register your models here.
+@admin.register(BaiViet)
+class BaiVietAdmin(admin.ModelAdmin):
+    list_display = ('tieu_de', 'ngay_dang')
+    search_fields = ('tieu_de', 'noi_dung')

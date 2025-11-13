@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo yêu cầu hỗ trợ</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">PLAYZY</div>
+    <div class="menu">
+        <a href="#">Trang chủ</a>
+        <a href="#">Sản phẩm</a>
+        <a href="#">Liên hệ</a>
+    </div>
+</div>
+
+<h1 class="section-title">Tạo yêu cầu hỗ trợ</h1>
+
+<form class="request-form" method="post">
+    {% csrf_token %}
+
+    <!-- Hiển thị lỗi chung của form -->
+    {% if form.non_field_errors %}
+        <div class="error-box">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <!-- Loại yêu cầu -->
+    <label>Loại yêu cầu</label>
+    {{ form.loai_yeu_cau }}
+
+    <!-- Tiêu đề -->
+    <label>Tiêu đề</label>
+    {{ form.tieu_de }}
+
+    <!-- Tên sản phẩm (nếu có) -->
+    <label>Tên sản phẩm (nếu liên quan)</label>
+    {{ form.ten_san_pham }}
+
+    <!-- Nội dung -->
+    <label>Nội dung</label>
+    {{ form.noi_dung }}
+
+    <button type="submit">Gửi yêu cầu</button>
+</form>
+
+<div class="footer">
+    <p>© 2025 PLAYZY - Hỗ trợ khách hàng</p>
+</div>
+
+</body>
+</html>
+

@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Giới thiệu - Playzy{% endblock %}
+{% block content %}
+
+<style>
+    .about-page-container {
+        max-width: 1200px;
+        margin: 130px auto 50px auto;
+        padding: 0 20px;
+    }
+    
+    .about-header {
+        text-align: center;
+        margin-bottom: 60px;
+        position: relative;
+    }
+    
+    .about-header-title {
+        font-size: 48px;
+        font-weight: 900;
+        color: #E96607;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        font-family: 'Baloo Bhai', sans-serif;
+    }
+    
+    .about-header-title .game-icon {
+        font-size: 36px;
+        color: #333;
+    }
+    
+    .about-header-title .orange-text {
+        color: #E96607;
+    }
+    
+    .about-header-title .black-text {
+        color: #333;
+    }
+    
+    .about-content-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: start;
+    }
+    
+    .about-text-section {
+        padding-right: 20px;
+    }
+    
+    .about-main-title {
+        font-size: 42px;
+        font-weight: 800;
+        color: #E96607;
+        margin-bottom: 25px;
+        font-family: 'Baloo Bhai', sans-serif;
+    }
+    
+    .about-intro {
+        font-size: 18px;
+        line-height: 1.8;
+        color: #333;
+        margin-bottom: 30px;
+    }
+    
+    .about-intro strong {
+        color: #E96607;
+        font-size: 20px;
+    }
+    
+    .about-subtitle {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+        margin-top: 35px;
+        margin-bottom: 15px;
+    }
+    
+    .about-mission {
+        font-size: 16px;
+        line-height: 1.8;
+        color: #555;
+        margin-bottom: 30px;
+    }
+    
+    .about-why-choose {
+        font-size: 16px;
+        line-height: 1.8;
+        color: #555;
+    }
+    
+    .about-features {
+        margin-top: 20px;
+    }
+    
+    .about-feature-item {
+        margin-bottom: 25px;
+        padding-left: 10px;
+    }
+    
+    .about-feature-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #E96607;
+        margin-bottom: 8px;
+    }
+    
+    .about-feature-desc {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #666;
+    }
+    
+    .about-images-section {
+        position: relative;
+        height: 600px;
+    }
+    
+    .about-image {
+        position: absolute;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        transition: transform 0.3s, z-index 0.3s;
+    }
+    
+    .about-image:hover {
+        transform: scale(1.05);
+        z-index: 10;
+    }
+    
+    .about-image-1 {
+        width: 320px;
+        height: 240px;
+        top: 0;
+        left: 0;
+        transform: rotate(-8deg);
+        z-index: 3;
+    }
+    
+    .about-image-2 {
+        width: 300px;
+        height: 220px;
+        top: 180px;
+        left: 120px;
+        transform: rotate(5deg);
+        z-index: 2;
+    }
+    
+    .about-image-3 {
+        width: 280px;
+        height: 200px;
+        top: 360px;
+        left: 240px;
+        transform: rotate(-6deg);
+        z-index: 1;
+    }
+    
+    .about-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    @media (max-width: 968px) {
+        .about-content-wrapper {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+        
+        .about-images-section {
+            height: auto;
+            min-height: 500px;
+        }
+        
+        .about-image {
+            position: relative;
+            transform: none !important;
+            margin-bottom: 20px;
+            width: 100% !important;
+            height: auto !important;
+        }
+        
+        .about-header-title {
+            font-size: 32px;
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+<div class="about-page-container">
+    <!-- HEADER -->
+    <div class="about-header">
+        <h1 class="about-header-title">
+            <span class="game-icon">🎮</span>
+            <span class="orange-text">TRÒ CHƠI HAY HO</span>
+            <span class="black-text">-</span>
+            <span class="orange-text">CÓ PLAYZY GAME LO</span>
+            <span class="game-icon">🎮</span>
+        </h1>
+    </div>
+
+    <!-- CONTENT WRAPPER -->
+    <div class="about-content-wrapper">
+        <!-- TEXT SECTION -->
+        <div class="about-text-section">
+            <h2 class="about-main-title">Về chúng tôi</h2>
+            
+            <div class="about-intro">
+                <strong>Chào mừng bạn đến với Playzy!</strong><br><br>
+                Trong thế giới số hóa ngày nay, chúng ta đôi khi quên mất giá trị của những tương tác trực tiếp, 
+                những tiếng cười sảng khoái và những thử thách vui vẻ cùng bạn bè và gia đình. 
+                Playzy được sinh ra từ niềm đam mê kết nối mọi người thông qua những trò chơi board game đầy màu sắc và sáng tạo.
+            </div>
+
+            <h3 class="about-subtitle">Sứ Mệnh Của Chúng Tôi</h3>
+            <p class="about-mission">
+                Sứ mệnh của Playzy không chỉ đơn giản là bán game. Chúng tôi muốn trở thành người bạn đồng hành, 
+                giúp bạn tìm ra "chất xúc tác" hoàn hảo cho những khoảnh khắc vui vẻ - dù là game đôi lứa, 
+                những bữa tiệc sôi động hay những cuộc đấu trí chiến lược sâu sắc.
+            </p>
+
+            <h3 class="about-subtitle">Tại Sao Lựa Chọn Playzy?</h3>
+            <div class="about-why-choose">
+                <div class="about-features">
+                    <div class="about-feature-item">
+                        <div class="about-feature-title">Bộ Sưu Tập Đa Dạng, Tuyển Chọn Kỳ Lưỡng</div>
+                        <div class="about-feature-desc">
+                            Playzy mang đến cho bạn một bộ sưu tập phong phú các board game, từ những trò chơi đơn giản 
+                            dành cho người mới bắt đầu đến những game chiến thuật phức tạp. Chúng tôi chọn lọc kỹ lưỡng 
+                            từng sản phẩm để đảm bảo phù hợp với nhiều nhóm người chơi và hoàn cảnh khác nhau - 
+                            từ Couple Game, Drinking Game đến Party Game.
+                        </div>
+                    </div>
+
+                    <div class="about-feature-item">
+                        <div class="about-feature-title">Tư Vấn Tận Tâm, Tìm Game Đúng Gu</div>
+                        <div class="about-feature-desc">
+                            Đội ngũ của chúng tôi luôn sẵn sàng tư vấn và gợi ý những board game phù hợp nhất 
+                            dựa trên số lượng người chơi, độ tuổi và sở thích của bạn. Chúng tôi hiểu rằng mỗi 
+                            nhóm bạn bè hay gia đình đều có phong cách chơi riêng, và chúng tôi ở đây để giúp bạn 
+                            tìm ra trò chơi hoàn hảo.
+                        </div>
+                    </div>
+
+                    <div class="about-feature-item">
+                        <div class="about-feature-title">Trải Nghiệm Mua Sắm Dễ Dàng</div>
+                        <div class="about-feature-desc">
+                            Website Playzy được thiết kế để bạn có thể dễ dàng tìm kiếm sản phẩm, lọc theo giá cả, 
+                            số người chơi, độ tuổi và xem chi tiết luật chơi, hình ảnh sản phẩm cũng như đánh giá 
+                            từ khách hàng. Mua sắm board game chưa bao giờ dễ dàng đến thế!
+                        </div>
+                    </div>
+
+                    <div class="about-feature-item">
+                        <div class="about-feature-title">Cộng Đồng Đam Mê</div>
+                        <div class="about-feature-desc">
+                            Playzy không chỉ là một cửa hàng - chúng tôi là một cộng đồng của những người đam mê board game. 
+                            Hãy ghé thăm phần "Tin tức/Blog" của chúng tôi để đọc những bài review game, mẹo chơi và 
+                            những câu chuyện thú vị từ cộng đồng người chơi.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IMAGES SECTION -->
+        <div class="about-images-section">
+            <div class="about-image about-image-1">
+                <img src="{% static 'Playzy/images/ve_chung_toi_images/v209_758.png' %}" alt="Board game party">
+            </div>
+            <div class="about-image about-image-2">
+                <img src="{% static 'Playzy/images/ve_chung_toi_images/v209_759.png' %}" alt="Game pieces">
+            </div>
+            <div class="about-image about-image-3">
+                <img src="{% static 'Playzy/images/ve_chung_toi_images/v209_760.png' %}" alt="Card games">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

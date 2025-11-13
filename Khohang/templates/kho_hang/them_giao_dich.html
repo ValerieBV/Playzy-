@@ -1,0 +1,324 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+  <!-- Font Google + Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <style>
+    body, input, select, button, table, th, td, label, span, h1, h2, h3 {
+      font-family: 'Baloo Bhai 2', sans-serif !important;
+    }
+
+    .breadcrumb {
+      font-size: 0.95em;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    .breadcrumb strong {
+      color: #E96607;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .page-header h1 {
+      color: #333;
+      font-weight: 700;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-back {
+      background: #6c757d;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-back:hover { background: #5a6268; }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+
+    .card-header {
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-align: center;
+      color: #E96607;
+      border-bottom: 2px solid #E96607;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .info-grid label {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .info-grid input, .info-grid select, .info-grid textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+
+    table th {
+      background: #1E90FF;
+      color: white;
+      font-weight: bold;
+    }
+
+    tbody tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    .btn-submit {
+      background: #1E90FF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-submit:hover { background: #0f75d1; }
+
+    .section-title {
+      font-size: 1.2rem;
+      color: #333;
+      font-weight: 700;
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status { font-weight: bold; }
+    .alert {
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+    .alert-danger {
+      background: #f8d7da;
+      border: 1px solid #f5c2c7;
+      color: #842029;
+    }
+    .error-message {
+      color: #dc3545;
+      font-size: 0.9em;
+      margin-top: 4px;
+    }
+  </style>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <span>Quản lý kho hàng</span> &gt; <strong>Thêm giao dịch</strong>
+  </div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1><i class="fas fa-file-circle-plus"></i> Phiếu giao dịch</h1>
+    <a href="{% url 'admin:Khohang_lichsugiaodich_changelist' %}" class="btn-back">
+      <i class="fas fa-arrow-left"></i> Quay lại lịch sử
+    </a>
+  </div>
+
+  <!-- Nội dung -->
+  <div class="card">
+    <div class="card-header">Thông tin chung</div>
+    <form method="post">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="info-grid">
+        <div>
+          <label for="{{ form.ma_sp.id_for_label }}"><i class="fas fa-box"></i> Sản phẩm</label>
+          {{ form.ma_sp }}
+          {% if form.ma_sp.errors %}
+            {% for error in form.ma_sp.errors %}
+              <div class="error-message">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div>
+          <label for="{{ form.loai_giao_dich.id_for_label }}"><i class="fas fa-exchange-alt"></i> Loại giao dịch</label>
+          {{ form.loai_giao_dich }}
+          {% if form.loai_giao_dich.errors %}
+            {% for error in form.loai_giao_dich.errors %}
+              <div class="error-message">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div>
+          <label for="{{ form.so_luong.id_for_label }}"><i class="fas fa-sort-numeric-up"></i> Số lượng thay đổi</label>
+          {{ form.so_luong }}
+          {% if form.so_luong.errors %}
+            {% for error in form.so_luong.errors %}
+              <div class="error-message">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div style="grid-column: span 2;">
+          <label for="{{ form.ghi_chu.id_for_label }}"><i class="fas fa-comment-dots"></i> Ghi chú</label>
+          {{ form.ghi_chu }}
+          {% if form.ghi_chu.errors %}
+            {% for error in form.ghi_chu.errors %}
+              <div class="error-message">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Bảng sản phẩm -->
+      <div class="section-title"><i class="fas fa-boxes"></i> Danh sách hàng hóa</div>
+
+      <table id="table-sanpham">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Tên hàng hóa</th>
+            <th>Mã hàng</th>
+            <th>Đơn vị tính</th>
+            <th>Đơn giá</th>
+            <th>Số lượng</th>
+            <th>Chiết khấu (%)</th>
+            <th>Thành tiền</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><input type="text" name="ten_sp[]" class="form-control"></td>
+            <td><input type="text" name="ma_sp[]" class="form-control"></td>
+            <td><input type="text" name="don_vi[]" class="form-control"></td>
+            <td><input type="number" name="don_gia[]" class="form-control" oninput="tinhTong(this)"></td>
+            <td><input type="number" name="so_luong[]" class="form-control" oninput="tinhTong(this)"></td>
+            <td><input type="number" name="chiet_khau[]" class="form-control" oninput="tinhTong(this)"></td>
+            <td class="thanh_tien">0</td>
+            <td><button type="button" class="btn btn-danger btn-sm" onclick="xoaDong(this)"><i class="fas fa-trash"></i></button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:10px;">
+        <button type="button" class="btn-secondary" onclick="themDong()">
+          <i class="fas fa-plus"></i> Thêm dòng
+        </button>
+      </div>
+
+      <script>
+      function themDong(){
+        const table = document.getElementById('table-sanpham').getElementsByTagName('tbody')[0];
+        const row = table.insertRow();
+        row.innerHTML = `
+          <td>${table.rows.length}</td>
+          <td><input type="text" name="ten_sp[]" class="form-control"></td>
+          <td><input type="text" name="ma_sp[]" class="form-control"></td>
+          <td><input type="text" name="don_vi[]" class="form-control"></td>
+          <td><input type="number" name="don_gia[]" class="form-control" oninput="tinhTong(this)"></td>
+          <td><input type="number" name="so_luong[]" class="form-control" oninput="tinhTong(this)"></td>
+          <td><input type="number" name="chiet_khau[]" class="form-control" oninput="tinhTong(this)"></td>
+          <td class="thanh_tien">0</td>
+          <td><button type="button" class="btn btn-danger btn-sm" onclick="xoaDong(this)"><i class="fas fa-trash"></i></button></td>
+        `;
+      }
+
+      function xoaDong(btn){
+        btn.closest('tr').remove();
+      }
+
+      function tinhTong(el){
+        const row = el.closest('tr');
+        const donGia = parseFloat(row.querySelector('[name="don_gia[]"]').value || 0);
+        const soLuong = parseFloat(row.querySelector('[name="so_luong[]"]').value || 0);
+        const chietKhau = parseFloat(row.querySelector('[name="chiet_khau[]"]').value || 0);
+        const thanhTien = donGia * soLuong * (1 - chietKhau / 100);
+        row.querySelector('.thanh_tien').innerText = thanhTien.toLocaleString('vi-VN');
+      }
+      </script>
+
+      <!-- Nút lưu -->
+      <div style="text-align:right; margin-top:20px;">
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-save"></i> Lưu giao dịch
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

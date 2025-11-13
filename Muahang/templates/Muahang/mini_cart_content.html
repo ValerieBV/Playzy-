@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIỎ HÀNG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            text-align: center;
+        }
+        .header-top {
+            display: flex;
+            justify-content: flex-end;
+            padding: 15px 20px;
+            gap: 20px;
+        }
+        .header-title-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .tieu-de-lon-gio-hang {
+            color: #ff7f27;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            margin-right: 5px;
+        }
+        .mui-ten-phai {
+            color: #ccc;
+            font-size: 20px;
+        }
+
+        /* Giỏ hàng trống */
+        .empty-cart-content {
+            padding: 50px 20px;
+        }
+        .tieu-de-loi {
+            color: #4a90e2;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .trang-thai-trong, .khong-co-san-pham {
+            color: #666;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        .nut-tiep-tuc-mua-sam {
+            display: inline-block;
+            background-color: #ff7f27;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px 30px;
+            border: none;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 30px;
+        }
+
+        /* Giỏ hàng có sản phẩm */
+        .cart-with-items {
+            padding: 20px;
+        }
+        .cart-items {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .cart-item img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .item-info {
+            flex: 1;
+            text-align: left;
+        }
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+        .item-quantity button {
+            padding: 2px 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .item-price {
+            font-weight: bold;
+            color: #e65c00;
+        }
+        .cart-total {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .btn-checkout {
+            display: inline-block;
+            background-color: #ff7f27;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px 25px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-top">
+        <a href="#" style="color: #4a90e2;">&#9002;</a>
+        <a href="#" style="color: #ff7f27;">&#128722;</a>
+    </div>
+
+    <div class="header-title-container">
+        <h1 class="tieu-de-lon-gio-hang">GIỎ HÀNG</h1>
+        <span class="mui-ten-phai">></span>
+    </div>
+
+    {% if items.exists %}
+    <!-- Giỏ hàng có sản phẩm -->
+    <div class="cart-with-items">
+        <ul class="cart-items">
+            {% for item in items %}
+            <li class="cart-item">
+                {% if item.san_pham.anh_dai_dien %}
+                <img src="{{ item.san_pham.anh_dai_dien.url }}" alt="{{ item.san_pham.ten_sp }}">
+                {% else %}
+                <img src="https://placehold.co/70x70" alt="Ảnh trống">
+                {% endif %}
+                <div class="item-info">
+                    <div class="item-name">{{ item.san_pham.ten_sp }}</div>
+                    <div class="item-quantity">
+                        <form method="POST" action="{% url 'Muahang:update_quantity' item.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="decrease">-</button>
+                        </form>
+                        <span>{{ item.so_luong }}</span>
+                        <form method="POST" action="{% url 'Muahang:update_quantity' item.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="increase">+</button>
+                        </form>
+                    </div>
+                    <div class="item-price">{{ item.thanh_tien }}đ</div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="cart-total">
+            Tổng tiền: {{ giohang.tong_tien }}đ
+        </div>
+        <a href="{% url 'Muahang:dat_hang' %}" class="btn-checkout">THANH TOÁN</a>
+    </div>
+    {% else %}
+    <!-- Giỏ hàng trống -->
+    <div class="empty-cart-content">
+        <h2 class="tieu-de-loi">OOPSS...</h2>
+        <p class="trang-thai-trong">Giỏ hàng hiện đang trống</p>
+        <p class="khong-co-san-pham">Không có sản phẩm nào trong giỏ của bạn</p>
+        <a href="{% url 'home' %}" class="nut-tiep-tuc-mua-sam">
+            TIẾP TỤC MUA SẮM
+        </a>
+    </div>
+    {% endif %}
+
+</body>
+</html>

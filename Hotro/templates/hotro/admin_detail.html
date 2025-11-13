@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin - Chi tiết yêu cầu {{ request_obj.ma_yeu_cau }} - Playzy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhai&display=swap" rel="stylesheet">
+  <link href="{% static 'css/main.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <header class="site-header admin-header">
+    <div class="site-brand">PLAYZY (Admin)</div>
+    <nav class="main-nav">
+      <a href="/">Trang chủ</a>
+      <a href="/admin/">Trang quản trị</a>
+      <a href="{% url 'Hotro:trang_chu' %}">Hỗ trợ</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Chi tiết yêu cầu (Quản trị): {{ request_obj.ma_yeu_cau }}</h1>
+
+    <div class="card">
+      <div class="admin-detail-form" style="padding:12px;">
+
+        <form method="post" action="{% url 'admin:Hotro_yeucauhotro_change' request_obj.pk %}">
+          {% csrf_token %}
+
+          <p><strong>Khách hàng:</strong>
+            {{ request_obj.khach_hang.get_full_name|default:request_obj.khach_hang.username }}
+          </p>
+
+          <p><strong>Tiêu đề:</strong> {{ request_obj.tieu_de }}</p>
+
+          <p><strong>Nội dung yêu cầu:</strong> {{ request_obj.noi_dung }}</p>
+
+          <p><strong>Trạng thái:</strong> {{ request_obj.get_trang_thai_display }}</p>
+
+          <p><strong>Ngày gửi:</strong> {{ request_obj.ngay_tao|date:"d/m/Y H:i" }}</p>
+        </form>
+
+      </div>
+    </div>
+
+    <h3 style="margin-top:18px;">Phản hồi từ hệ thống / nhân viên</h3>
+    <div class="card">
+      <div class="messages">
+
+        {% for m in request_obj.tin_nhan.all %}
+          <div class="message" style="margin-bottom:10px;padding:10px;border-radius:8px;background:#fff;border:1px solid #eee;">
+            <div class="msg-meta">
+              <strong>{{ m.nguoi_gui.get_full_name|default:m.nguoi_gui.username }}</strong>
+              -
+              <span class="time">{{ m.ngay_tao|date:"d/m/Y H:i" }}</span>
+            </div>
+
+            <div class="msg-body" style="margin-top:6px;">{{ m.noi_dung }}</div>
+          </div>
+        {% empty %}
+          <p>Chưa có phản hồi nào.</p>
+        {% endfor %}
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="logo">PLAYZY</div>
+    </div>
+  </footer>
+</body>
+</html>
+

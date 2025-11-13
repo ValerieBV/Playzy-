@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="order-tracking-container" style="max-width: 1200px; margin: 30px auto; padding: 0 20px;">
+  <h1 style="color:#ff7f27; margin-bottom: 20px;">Theo dõi đơn hàng</h1>
+
+  <!-- Thanh chọn trạng thái -->
+  <div class="status-tabs" style="display:flex; gap:20px; margin-bottom:30px;">
+    <button class="tab active" data-tab="tat-ca" style="background:#ff7f27;color:white;padding:8px 20px;border:none;border-radius:5px;cursor:pointer;">Tất cả</button>
+    <button class="tab" data-tab="cho-giao" style="padding:8px 20px;border:1px solid #ff7f27;color:#ff7f27;border-radius:5px;cursor:pointer;">Chờ giao hàng</button>
+    <button class="tab" data-tab="hoan-thanh" style="padding:8px 20px;border:1px solid #ff7f27;color:#ff7f27;border-radius:5px;cursor:pointer;">Hoàn thành</button>
+  </div>
+
+  <!-- Danh sách đơn hàng -->
+  <div id="tat-ca" class="order-list">
+    {% for don in tat_ca %}
+    <div class="order-card" style="border:1px solid #ddd;border-radius:10px;margin-bottom:20px;padding:15px;text-align:left;">
+      <p><strong>Mã đơn:</strong> #{{ don.id }} | <strong>Trạng thái:</strong> {{ don.get_trang_thai_display }}</p>
+      <div style="margin-top:10px;">
+        {% for item in don.chi_tiet.all %}
+        <div style="display:flex;align-items:center;gap:15px;margin-bottom:10px;">
+          <img src="{{ item.san_pham.hinh_anh.url }}" alt="{{ item.san_pham.ten }}" style="width:80px;height:80px;object-fit:cover;border-radius:5px;">
+          <div style="flex:1;">
+            <h4 style="margin:0;">{{ item.san_pham.ten }}</h4>
+            <p style="margin:3px 0;">Số lượng: {{ item.so_luong }}</p>
+            {% if item.giam_gia > 0 %}
+              <p>Thành tiền: <s>{{ item.don_gia|floatformat:0 }}đ</s> <strong style="color:#e65c00;">{{ item.thanh_tien|floatformat:0 }}đ</strong></p>
+            {% else %}
+              <p>Thành tiền: <strong style="color:#e65c00;">{{ item.thanh_tien|floatformat:0 }}đ</strong></p>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div style="text-align:right;font-weight:bold;">Tổng đơn: {{ don.tong_tien|floatformat:0 }}đ</div>
+    </div>
+    {% empty %}
+      <p>Không có đơn hàng nào.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Tab Chờ giao -->
+  <div id="cho-giao" class="order-list" style="display:none;">
+    {% for don in cho_giao %}
+    <div class="order-card" style="border:1px solid #ddd;border-radius:10px;margin-bottom:20px;padding:15px;">
+      <p><strong>Mã đơn:</strong> #{{ don.id }} | <strong>Trạng thái:</strong> {{ don.get_trang_thai_display }}</p>
+      {% for item in don.chi_tiet.all %}
+        <div style="display:flex;align-items:center;gap:15px;margin-bottom:10px;">
+          <img src="{{ item.san_pham.hinh_anh.url }}" alt="{{ item.san_pham.ten }}" style="width:80px;height:80px;object-fit:cover;border-radius:5px;">
+          <div style="flex:1;">
+            <h4>{{ item.san_pham.ten }}</h4>
+            <p>Số lượng: {{ item.so_luong }}</p>
+            <p>Giá: {{ item.thanh_tien|floatformat:0 }}đ</p>
+          </div>
+        </div>
+      {% endfor %}
+      <div style="text-align:right;font-weight:bold;">Tổng đơn: {{ don.tong_tien|floatformat:0 }}đ</div>
+    </div>
+    {% empty %}
+      <p>Không có đơn hàng đang giao.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Tab Hoàn thành -->
+  <div id="hoan-thanh" class="order-list" style="display:none;">
+    {% for don in hoan_thanh %}
+    <div class="order-card" style="border:1px solid #ddd;border-radius:10px;margin-bottom:20px;padding:15px;">
+      <p><strong>Mã đơn:</strong> #{{ don.id }} | <strong>Trạng thái:</strong> {{ don.get_trang_thai_display }}</p>
+      {% for item in don.chi_tiet.all %}
+        <div style="display:flex;align-items:center;gap:15px;margin-bottom:10px;">
+          <img src="{{ item.san_pham.hinh_anh.url }}" alt="{{ item.san_pham.ten }}" style="width:80px;height:80px;object-fit:cover;border-radius:5px;">
+          <div style="flex:1;">
+            <h4>{{ item.san_pham.ten }}</h4>
+            <p>Số lượng: {{ item.so_luong }}</p>
+            <p>Giá: {{ item.thanh_tien|floatformat:0 }}đ</p>
+          </div>
+        </div>
+      {% endfor %}
+      <div style="text-align:right;font-weight:bold;">Tổng đơn: {{ don.tong_tien|floatformat:0 }}đ</div>
+    </div>
+    {% empty %}
+      <p>Chưa có đơn hoàn thành.</p>
+    {% endfor %}
+  </div>
+
+  <p style="margin-top:30px; font-size:14px; color:#555;">
+    Nếu có vấn đề gì về đơn hàng, vui lòng <strong>Liên hệ shop</strong> để được hỗ trợ sớm nhất nhé!
+  </p>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const lists = document.querySelectorAll('.order-list');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      lists.forEach(l => l.style.display = 'none');
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab).style.display = 'block';
+    });
+  });
+</script>
+
+{% endblock %}  templates này đúng chưa

@@ -1,0 +1,190 @@
+{% load static %}
+{% if items.exists %}
+    <!-- Cẩm đã sửa - Header với mũi tên -->
+    <div class="d-flex align-items-center justify-content-between p-3 border-bottom" style="background-color: #fff;">
+        <h6 class="fw-bold mb-0" style="color: #FF5722;">GIỎ HÀNG</h6>
+        <span style="color: #ccc; font-size: 18px;">&gt;</span>
+    </div>
+
+    <!-- Cẩm đã sửa - Freeship promotion -->
+    {% if con_thieu > 0 %}
+    <div class="px-3 py-2" style="background-color: #f5f5f5; border-bottom: 1px solid #eee;">
+        <small class="text-muted d-flex align-items-center">
+            <i class="fa-solid fa-truck me-2"></i>
+            Mua thêm {{ con_thieu|floatformat:0 }}₫ để được freeship
+        </small>
+    </div>
+    {% endif %}
+
+    <!-- Danh sách sản phẩm -->
+    <div style="max-height: 400px; overflow-y: auto;">
+        {% for item in items %}
+        <div class="d-flex align-items-center p-3 border-bottom">
+            {% if item.san_pham.anh_dai_dien %}
+            <img src="{{ item.san_pham.anh_dai_dien.url }}" 
+                 alt="{{ item.san_pham.ten_sp }}" 
+                 style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; margin-right: 12px;">
+            {% else %}
+            <img src="https://placehold.co/60x60" 
+                 alt="Ảnh trống" 
+                 style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; margin-right: 12px;">
+            {% endif %}
+            <div class="flex-grow-1">
+                <p class="mb-1 fw-bold small" style="font-size: 13px; line-height: 1.3; margin-bottom: 8px !important;">{{ item.san_pham.ten_sp }}</p>
+                <div class="d-flex align-items-center justify-content-between">
+                    <!-- Cẩm đã sửa - Nút điều chỉnh số lượng -->
+                    <div class="d-flex align-items-center" onclick="event.stopPropagation();">
+                        <button type="button" class="btn btn-sm p-0 qty-btn" data-action="decrease" data-item-id="{{ item.id }}" onclick="updateCartQuantity(event, {{ item.id }}, 'decrease');" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; background: #fff; font-size: 16px; line-height: 1;">-</button>
+                        <span class="mx-2 fw-bold item-quantity" data-item-id="{{ item.id }}" style="min-width: 30px; text-align: center;">{{ item.so_luong }}</span>
+                        <button type="button" class="btn btn-sm p-0 qty-btn" data-action="increase" data-item-id="{{ item.id }}" onclick="updateCartQuantity(event, {{ item.id }}, 'increase');" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; background: #fff; font-size: 16px; line-height: 1;">+</button>
+                    </div>
+                    <span class="text-danger fw-bold item-total" data-item-id="{{ item.id }}" style="font-size: 14px;">{{ item.thanh_tien|floatformat:0 }}₫</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Cẩm đã sửa - Tạm tính và nút thanh toán (đổi từ "Tổng tiền" thành "Tạm tính") -->
+    <div class="p-3 border-top" style="background-color: #fff;">
+        <div class="d-flex justify-content-between mb-3">
+            <span class="fw-bold">Tạm tính:</span>
+            <span class="fw-bold text-danger" id="cart-total-price">{{ giohang.tong_tien|floatformat:0 }}₫</span>
+        </div>
+        <a href="{% url 'Muahang:dat_hang' %}" class="btn btn-danger w-100 fw-bold" style="background-color: #FF5722; border: none;color: white;">
+
+            THANH TOÁN
+        </a>
+    </div>
+{% else %}
+    <div class="empty-cart-content" style="padding: 50px 20px; text-align: center;">
+        <h2 class="tieu-de-loi" style="color: #4a90e2; font-size: 36px; font-weight: bold; margin-bottom: 10px;">OOPSS...</h2>
+        <p class="trang-thai-trong" style="color: #666; font-size: 14px; margin: 5px 0;">Giỏ hàng hiện đang trống</p>
+        <p class="khong-co-san-pham" style="color: #666; font-size: 14px; margin: 5px; display: inline;0;">Không có sản phẩm nào trong giỏ của bạn</p>
+        <a href="{% url 'Sanpham:trang_danh_muc' %}" class="nut-tiep-tuc-mua-sam" style="display: inline-block; background-color: #ff7f27; color: white; font-size: 18px; font-weight: bold; padding: 15px 30px; border: none; text-decoration: none; border-radius: 4px; margin-top: 30px;">
+            TIẾP TỤC MUA SẮM
+        </a>
+    </div>
+
+{% endif %}
+
+<script>
+// Cẩm đã sửa - Hàm cập nhật số lượng giỏ hàng (global function để có thể gọi từ inline onclick)
+function updateCartQuantity(event, itemId, action) {
+    event.preventDefault();
+    event.stopPropagation(); // Ngăn dropdown đóng
+    
+    // Hàm format số tiền
+    function formatPrice(price) {
+        return Math.round(price).toLocaleString('vi-VN') + '₫';
+    }
+    
+    const button = event.target;
+    // Lấy URL từ action của button hoặc tạo từ base URL
+    const baseUrl = window.location.origin;
+    const url = `${baseUrl}/muahang/gio-hang/cap-nhat-so-luong/${itemId}/`;
+    
+    // Lấy CSRF token từ cookie hoặc meta tag
+    let csrfToken = '';
+    const csrfCookie = document.cookie.match(/csrftoken=([^;]+)/);
+    if (csrfCookie) {
+        csrfToken = csrfCookie[1];
+    } else {
+        const csrfMeta = document.querySelector('meta[name=csrf-token]');
+        if (csrfMeta) {
+            csrfToken = csrfMeta.getAttribute('content');
+        } else {
+            // Fallback: tìm trong form nếu có
+            const form = document.querySelector(`form[action*="${itemId}"]`);
+            if (form) {
+                const csrfInput = form.querySelector('[name=csrfmiddlewaretoken]');
+                if (csrfInput) csrfToken = csrfInput.value;
+            }
+        }
+    }
+    
+    if (!csrfToken) {
+        console.error('CSRF token not found');
+        return;
+    }
+    
+    // Disable button để tránh click nhiều lần
+    button.disabled = true;
+    const allButtons = document.querySelectorAll(`.qty-btn[data-item-id="${itemId}"]`);
+    allButtons.forEach(btn => btn.disabled = true);
+    
+    // Tạo FormData
+    const formData = new FormData();
+    formData.append('action', action);
+    formData.append('csrfmiddlewaretoken', csrfToken);
+            
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': csrfToken
+                }
+            })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+            .then(data => {
+                if (data.status === 'success') {
+            // 1. Cập nhật số lượng trên icon cart
+                    const cartCount = document.getElementById("cart-count");
+                    if (cartCount) {
+                        cartCount.innerText = data.total_items;
+                    }
+            
+            // 2. Cập nhật số lượng và giá của item ngay lập tức
+            if (data.item_deleted) {
+                // Item đã bị xóa (số lượng = 0), reload lại mini cart
+                if (typeof refreshMiniCart === 'function') {
+                    refreshMiniCart();
+                    return;
+                }
+            } else if (data.item) {
+                // Cập nhật số lượng - tìm trong container hiện tại
+                const container = document.getElementById('mini-cart-container');
+                const quantitySpan = container.querySelector(`.item-quantity[data-item-id="${data.item.id}"]`);
+                if (quantitySpan) {
+                    quantitySpan.innerText = data.item.quantity;
+                }
+                
+                // Cập nhật giá của item
+                const itemTotalSpan = container.querySelector(`.item-total[data-item-id="${data.item.id}"]`);
+                if (itemTotalSpan) {
+                    itemTotalSpan.innerText = formatPrice(data.item.item_total);
+                }
+            }
+            
+            // 3. Cập nhật tổng tiền
+            const totalPriceSpan = document.getElementById("cart-total-price");
+            if (totalPriceSpan) {
+                totalPriceSpan.innerText = formatPrice(data.total_price);
+            }
+        } else {
+            // Nếu có lỗi, reload lại mini cart
+                    if (typeof refreshMiniCart === 'function') {
+                        refreshMiniCart();
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Nếu lỗi, reload lại mini cart
+                if (typeof refreshMiniCart === 'function') {
+                    refreshMiniCart();
+                }
+    })
+    .finally(() => {
+        // Re-enable buttons
+        allButtons.forEach(btn => btn.disabled = false);
+    });
+}
+</script>
+

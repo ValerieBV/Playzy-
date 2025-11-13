@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -27,16 +26,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',  # Phải đặt trước django.contrib.admin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'Taikhoan',
     'Sanpham',
     'Tintuc',
@@ -66,6 +66,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.media',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -77,7 +78,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Playzy.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -87,7 +87,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -107,7 +106,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -115,10 +113,8 @@ LANGUAGE_CODE = 'vi-vn'
 
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
-
 USE_I18N = True
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -129,8 +125,199 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+# --- STATIC FILES --- chỉnh chỗ này
+# URL truy cập file tĩnh (CSS, JS, ảnh)
+STATIC_URL = '/static/'
+
+# Thư mục chứa file tĩnh trong quá trình phát triển
+# (ở đây bạn có static/plazy/css và static/plazy/image)
+STATICFILES_DIRS = [BASE_DIR / "static", ]  # Django sẽ tự động đọc static/plazy/ bên trong
+
+# Khi chạy collectstatic (deploy), tất cả file static sẽ gom về đây:
+STATIC_ROOT = BASE_DIR / "staticfiles"  # thêm dòng này cho chuẩn Django
+
+# --- MEDIA FILES ---
+# URL để truy cập file người dùng upload (nếu có)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+
+# Thư mục lưu trữ file người dùng upload
+MEDIA_ROOT = BASE_DIR / "media"
+
+# --- AUTH ---
+LOGIN_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = '/admin/'
+LOGOUT_REDIRECT_URL = '/admin/login/'
+
+# --- JAZZMIN SETTINGS ---
+JAZZMIN_SETTINGS = {
+    # title of the window (Will default to current_admin_site.site_title if absent or None)
+    "site_title": "Playzy Admin",
+
+    # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_header": "Playzy",
+
+    # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_brand": "Playzy Admin",
+
+    # Logo to use for your site, must be present in static files, used for brand on top left
+    # "site_logo": "books/img/logo.png",
+
+    # Logo to use for your site, must be present in static files, used for login form logo (defaults to site_logo)
+    # "login_logo": None,
+
+    # Logo to use for login form in dark themes (defaults to login_logo)
+    # "login_logo_dark": None,
+
+    # CSS classes that are applied to the logo above
+    # "site_logo_classes": "img-circle",
+
+    # Relative path to a favicon for your site, will default to site_logo if absent (ideally 32x32 px)
+    # "site_icon": None,
+
+    # Welcome text on the login screen
+    "welcome_sign": "Chào mừng đến với Playzy Admin",
+
+    # Copyright on the footer
+    "copyright": "Playzy",
+
+    # The model admin to search from the search bar, search bar omitted if excluded
+    "search_model": ["auth.User", "Sanpham.SanPham"],
+
+    # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
+    "user_avatar": None,
+
+    ############
+    # Top Menu #
+    ############
+
+    # Links to put along the top menu
+    "topmenu_links": [
+        # Url that gets reversed (Permissions can be added)
+        {"name": "Trang chủ", "url": "admin:index", "permissions": ["auth.view_user"]},
+        # external url that opens in a new window (Permissions can be added)
+        {"name": "Về website", "url": "/", "new_window": True},
+    ],
+
+    #############
+    # User Menu #
+    #############
+
+    # Additional links to include in the user menu on the top right ("app" url type is not allowed)
+    "usermenu_links": [
+        {"name": "Về website", "url": "/", "new_window": True},
+    ],
+
+    #############
+    # Side Menu #
+    #############
+
+    # Whether to display the side menu
+    "show_sidebar": True,
+
+    # Whether to aut expand the menu
+    "navigation_expanded": True,
+
+    # Hide these apps when generating side menu e.g (auth)
+    "hide_apps": [],
+
+    # Hide these models when generating side menu (e.g auth.user)
+    "hide_models": [],
+
+    # List of apps (and/or models) to base side menu ordering off of (does not need to contain all apps/models)
+    "order_with_respect_to": ["auth", "Taikhoan", "Sanpham", "Muahang", "Tintuc", "Hotro", "Khohang", "Lienhe"],
+
+    # Custom links to append to app groups, keyed on app name
+    "custom_links": {
+        "books": [{
+            "name": "Make Messages",
+            "url": "make_messages",
+            "icon": "fas fa-comments",
+            "permissions": ["books.view_book"]
+        }]
+    },
+
+    # Custom icons for side menu apps/models See https://fontawesome.com/icons?d=gallery&m=free&v=5.0.0,5.0.1,5.0.10,5.0.11,5.0.12,5.0.13,5.0.2,5.0.3,5.0.4,5.0.5,5.0.6,5.0.7,5.0.8,5.0.9,5.1.0,5.1.1,5.2.0,5.3.0,5.3.1,5.4.0,5.4.1,5.4.2,5.5.0,5.6.0,5.6.1,5.6.3,5.7.0,5.7.1,5.7.2,5.8.0,5.8.1,5.8.2,5.9.0,5.10.0,5.10.1,5.10.2,5.11.0,5.11.1,5.11.2,5.12.0,5.12.1,5.13.0,5.13.1,5.14.0,5.15.0,5.15.1,5.15.2,5.15.3,5.15.4,5.16.0,5.16.1,5.16.2,5.17.0,5.17.1,5.18.0,5.18.1,5.18.2,5.18.3,5.19.0,5.19.1,5.20.0,5.20.1,5.20.2,5.20.3,5.21.0,5.21.1,5.21.2,5.21.3,5.22.0,5.22.1,5.23.0,5.23.1,5.24.0,5.24.1,5.24.2,5.24.3,5.25.0,5.25.1,5.26.0,5.26.1,5.27.0,5.27.1,5.28.0,5.28.1,5.29.0,5.29.1,5.30.0,5.30.1,5.31.0,5.31.1,5.32.0,5.33.0,5.33.1,5.34.0,5.34.1,5.34.2,5.34.3,5.35.0,5.35.1,5.35.2,5.36.0,5.36.1,5.37.0,5.37.1,5.38.0,5.38.1,5.38.2,5.39.0,5.39.1,5.40.0,5.40.1,5.40.2,5.41.0,5.41.1,5.42.0,5.42.1,5.43.0,5.43.1,5.44.0,5.44.1,5.44.2,5.45.0,5.45.1,5.46.0,5.47.0,5.48.0,5.48.1,5.49.0,5.49.1,5.50.0,5.50.1,5.51.0,5.52.0,5.53.0,5.53.1,5.54.0,5.54.1,5.54.2,5.55.0,5.55.1,5.56.0,5.57.0,5.58.0,5.59.0,5.60.0,5.60.1,5.60.2,5.60.3,5.61.0,5.61.1,5.62.0,5.63.0,5.64.0,5.65.0,5.66.0,5.67.0,5.68.0,5.69.0,5.70.0,5.71.0,5.72.0,5.73.0,5.74.0,5.75.0,5.76.0,5.77.0,5.78.0,5.79.0,5.80.0,5.81.0,5.82.0,5.83.0,5.84.0,5.85.0,5.86.0,5.87.0,5.88.0,5.89.0,5.90.0,5.91.0,5.92.0,5.93.0,5.94.0,5.95.0,5.96.0,5.97.0,5.98.0,5.99.0,5.100.0,5.101.0,5.102.0,5.103.0,5.104.0,5.105.0,5.106.0,5.107.0,5.108.0,5.109.0,5.110.0,5.111.0,5.112.0,5.113.0,5.114.0,5.115.0,5.116.0,5.117.0,5.118.0,5.119.0,5.120.0,5.121.0,5.122.0,5.123.0,5.124.0,5.125.0,5.126.0,5.127.0,5.128.0,5.129.0,5.130.0,5.131.0,5.132.0,5.133.0,5.134.0,5.135.0,5.136.0,5.137.0,5.138.0,5.139.0,5.140.0,5.141.0,5.142.0,5.143.0,5.144.0,5.145.0,5.146.0,5.147.0,5.148.0,5.149.0,5.150.0,5.151.0,5.152.0,5.153.0,5.154.0,5.155.0,5.156.0,5.157.0,5.158.0,5.159.0,5.160.0,5.161.0,5.162.0,5.163.0,5.164.0,5.165.0,5.166.0,5.167.0,5.168.0,5.169.0,5.170.0,5.171.0,5.172.0,5.173.0,5.174.0,5.175.0,5.176.0,5.177.0,5.178.0,5.179.0,5.180.0,5.181.0,5.182.0,5.183.0,5.184.0,5.185.0,5.186.0,5.187.0,5.188.0,5.189.0,5.190.0,5.191.0,5.192.0,5.193.0,5.194.0,5.195.0,5.196.0,5.197.0,5.198.0,5.199.0,5.200.0,5.201.0,5.202.0,5.203.0,5.204.0,5.205.0,5.206.0,5.207.0,5.208.0,5.209.0,5.210.0,5.211.0,5.212.0,5.213.0,5.214.0,5.215.0,5.216.0,5.217.0,5.218.0,5.219.0,5.220.0,5.221.0,5.222.0,5.223.0,5.224.0,5.225.0,5.226.0,5.227.0,5.228.0,5.229.0,5.230.0,5.231.0,5.232.0,5.233.0,5.234.0,5.235.0,5.236.0,5.237.0,5.238.0,5.239.0,5.240.0,5.241.0,5.242.0,5.243.0,5.244.0,5.245.0,5.246.0,5.247.0,5.248.0,5.249.0,5.250.0,5.251.0,5.252.0,5.253.0,5.254.0,5.255.0,5.256.0,5.257.0,5.258.0,5.259.0,5.260.0,5.261.0,5.262.0,5.263.0,5.264.0,5.265.0,5.266.0,5.267.0,5.268.0,5.269.0,5.270.0,5.271.0,5.272.0,5.273.0,5.274.0,5.275.0,5.276.0,5.277.0,5.278.0,5.279.0,5.280.0,5.281.0,5.282.0,5.283.0,5.284.0,5.285.0,5.286.0,5.287.0,5.288.0,5.289.0,5.290.0,5.291.0,5.292.0,5.293.0,5.294.0,5.295.0,5.296.0,5.297.0,5.298.0,5.299.0,5.300.0 for the full list of 5.13.0 icons
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "Taikhoan.NguoiDung": "fas fa-user-circle",
+        "Sanpham.SanPham": "fas fa-box",
+        "Sanpham.DanhMuc": "fas fa-folder",
+        "Sanpham.DanhGiaSanPham": "fas fa-star",
+        "Muahang.DonHang": "fas fa-shopping-cart",
+        "Muahang.GioHang": "fas fa-shopping-bag",
+        "Muahang.TrangThaiDonHang": "fas fa-clipboard-list",
+        "Tintuc.BaiViet": "fas fa-newspaper",
+        "Hotro.YeuCauHoTro": "fas fa-headset",
+        "Khohang.KhoHang": "fas fa-warehouse",
+        "Lienhe.CauHoiThuongGap": "fas fa-question-circle",
+    },
+    # Icons that are used when one is not manually specified
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+
+    #################
+    # Related Modal #
+    #################
+    # Use modals instead of popups
+    "related_modal_active": False,
+
+    #############
+    # UI Tweaks #
+    #############
+    # Relative paths to custom CSS/JS scripts (must be present in static files)
+    "custom_css": None,
+    "custom_js": None,
+    # Whether to link font from fonts.googleapis.com (use custom_css to supply font otherwise)
+    "use_google_fonts_cdn": True,
+    # Whether to show the UI customizer on the sidebar
+    "show_ui_builder": False,
+
+    ###############
+    # Change view #
+    ###############
+    # Render out the change view as a single form, or in tabs, current options are
+    # - single
+    # - horizontal_tabs (default)
+    # - vertical_tabs
+    # - collapsible
+    # - carousel
+    "changeform_format": "horizontal_tabs",
+    # override change forms on a per modeladmin basis
+    "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
+    # Add a language dropdown into the admin
+    "language_chooser": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": False,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "default",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}
