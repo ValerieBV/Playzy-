@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import KhoHang, LichSuGiaoDich
 from Sanpham.models import SanPham, DanhMuc
 from Muahang.models import DonHang
-from .forms import ThemGiaoDichForm
+from .forms import ThemGiaoDichForm, ThemSanPhamVaoKhoForm
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.admin import site
 
@@ -83,6 +83,43 @@ def chi_tiet_kho_hang_view(request):
     danh_muc = request.GET.get('danh_muc')
     tu_gia = request.GET.get('tu_gia')
     den_gia = request.GET.get('den_gia')
+    
+    # Lấy danh sách sản phẩm chưa có trong kho để hiển thị trong dropdown
+    san_pham_trong_kho_ids = set(KhoHang.objects.values_list('ma_sp_id', flat=True))
+    san_pham_chua_co_kho_queryset = SanPham.objects.exclude(ma_sp__in=san_pham_trong_kho_ids)
+    san_pham_chua_co_kho_list = list(san_pham_chua_co_kho_queryset)
+    
+    # Xử lý POST request để thêm sản phẩm vào kho
+    if request.method == 'POST' and 'them_san_pham' in request.POST:
+        ma_sp = request.POST.get('ma_sp')
+        so_luong = request.POST.get('so_luong_ton_kho')
+        
+        if ma_sp and so_luong:
+            try:
+                san_pham = SanPham.objects.get(ma_sp=ma_sp)
+                so_luong = int(so_luong)
+                
+                # Kiểm tra lại để tránh duplicate
+                if not KhoHang.objects.filter(ma_sp=san_pham).exists():
+                    # Tạo kho hàng mới, model sẽ tự động tạo mã kho hàng unique
+                    kho_hang = KhoHang(ma_sp=san_pham, so_luong_ton_kho=so_luong)
+                    kho_hang.save()
+                    messages.success(request, f'Đã thêm sản phẩm {san_pham.ten_sp} vào kho hàng với số lượng {so_luong}.')
+                    return redirect('Khohang:chi_tiet_kho_hang')
+                else:
+                    messages.error(request, f'Sản phẩm {san_pham.ten_sp} đã có trong kho hàng.')
+            except SanPham.DoesNotExist:
+                messages.error(request, 'Sản phẩm không tồn tại.')
+            except ValueError:
+                messages.error(request, 'Số lượng không hợp lệ.')
+            except Exception as e:
+                error_msg = str(e)
+                if 'UNIQUE constraint' in error_msg or 'unique' in error_msg.lower():
+                    messages.error(request, f'Lỗi: Mã kho hàng bị trùng. Vui lòng thử lại.')
+                else:
+                    messages.error(request, f'Lỗi khi thêm sản phẩm: {error_msg}')
+        else:
+            messages.error(request, 'Vui lòng điền đầy đủ thông tin.')
 
     danh_sach_ton_kho = KhoHang.objects.select_related('ma_sp', 'ma_sp__danh_muc').all()
 
@@ -96,13 +133,14 @@ def chi_tiet_kho_hang_view(request):
         danh_sach_ton_kho = danh_sach_ton_kho.filter(ma_sp__gia_goc__gte=tu_gia)
     if den_gia:
         danh_sach_ton_kho = danh_sach_ton_kho.filter(ma_sp__gia_goc__lte=den_gia)
-
+    
     context = {
         **site.each_context(request),  # ← thêm dòng này để sidebar/header Jazzmin hiện
         'title': 'Chi tiết kho hàng',
         'danh_sach_ton_kho': danh_sach_ton_kho,
         'danh_muc_list': DanhMuc.objects.all(),
         'selected_danh_muc': danh_muc or '',
+        'san_pham_chua_co_kho': san_pham_chua_co_kho_list,
     }
     return render(request, 'kho_hang/chi_tiet_kho_hang.html', context)
 

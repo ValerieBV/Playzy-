@@ -79,6 +79,12 @@ class SanPham(models.Model):
     so_luong = models.IntegerField(verbose_name="Số lượng")
     don_vi_tinh = models.CharField(max_length=50, blank=True, null=True, verbose_name="Đơn vị tính", default="Cái")
 
+    # nha_cung_cap = models.CharField(
+    #     max_length=255,
+    #     null=True,
+    #     blank=True,
+    #     verbose_name="Nhà cung cấp"
+    # )
 
     @property
     def gia_da_giam(self):

@@ -94,3 +94,9 @@ class SanPhamAdmin(admin.ModelAdmin):
 
     # === CÁC MỤC LIÊN QUAN (Hiển thị ở dưới cùng) ===
     inlines = [HinhAnhSanPhamInline, DanhGiaSanPhamInline]
+
+    class Media:
+        css = {
+            'all': ('admin/css/sanpham_admin.css',)
+        }
+        js = ('admin/js/sanpham_admin.js',)

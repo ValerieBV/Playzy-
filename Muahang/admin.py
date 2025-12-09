@@ -127,9 +127,16 @@ class DonHangAdmin(admin.ModelAdmin):
     def tong_thanh_toan_display(self, obj):
         return f"{obj.tong_thanh_toan():,.0f}₫"
     tong_thanh_toan_display.short_description = "Tổng thanh toán"
-    
-    actions = ['mark_cho_xac_nhan', 'mark_dang_giao', 'mark_da_giao', 'mark_that_bai']
-    
+
+    actions = [
+        'mark_cho_xac_nhan',
+        'mark_da_xac_nhan',
+        'mark_dang_giao',
+        'mark_da_giao',
+        'mark_thanh_cong',
+        'mark_that_bai'
+    ]
+
     def mark_cho_xac_nhan(self, request, queryset):
         queryset.update(trang_thai='cho_xac_nhan')
         for don_hang in queryset:
@@ -149,7 +156,18 @@ class DonHangAdmin(admin.ModelAdmin):
             )
         self.message_user(request, f'Đã cập nhật {queryset.count()} đơn hàng sang trạng thái "Đang giao".')
     mark_dang_giao.short_description = "Chuyển sang 'Đang giao'"
-    
+
+    def mark_da_xac_nhan(self, request, queryset):
+        queryset.update(trang_thai='da_xac_nhan')
+        for don_hang in queryset:
+            TrangThaiDonHang.objects.create(
+                don_hang=don_hang,
+                noi_dung='da_xac_nhan'
+            )
+        self.message_user(request, f'Đã cập nhật {queryset.count()} đơn sang "Đã xác nhận".')
+
+    mark_da_xac_nhan.short_description = "Chuyển sang 'Đã xác nhận'"
+
     def mark_da_giao(self, request, queryset):
         queryset.update(trang_thai='da_giao')
         for don_hang in queryset:
@@ -159,7 +177,18 @@ class DonHangAdmin(admin.ModelAdmin):
             )
         self.message_user(request, f'Đã cập nhật {queryset.count()} đơn hàng sang trạng thái "Đã giao".')
     mark_da_giao.short_description = "Chuyển sang 'Đã giao'"
-    
+
+    def mark_thanh_cong(self, request, queryset):
+        queryset.update(trang_thai='thanh_cong')
+        for don_hang in queryset:
+            TrangThaiDonHang.objects.create(
+                don_hang=don_hang,
+                noi_dung='thanh_cong'
+            )
+        self.message_user(request, f'Đã cập nhật {queryset.count()} đơn sang \"Thành công\".')
+
+    mark_thanh_cong.short_description = "Chuyển sang 'Thành công'"
+
     def mark_that_bai(self, request, queryset):
         queryset.update(trang_thai='that_bai')
         for don_hang in queryset:

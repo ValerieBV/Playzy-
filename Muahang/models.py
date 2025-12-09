@@ -45,9 +45,11 @@ class GioHangItem(models.Model):
 # Đơn hàng
 class DonHang(models.Model):
     TRANG_THAI_CHOICES = [
-        ('cho_xac_nhan','Chờ xác nhận'),
+        ('cho_xac_nhan', 'Chờ xác nhận'),
+        ('da_xac_nhan', 'Người bán đã xác nhận'),
         ('dang_giao', 'Đang giao'),
         ('da_giao', 'Đã giao'),
+        ('thanh_cong', 'Thành công'),
         ('that_bai', 'Thất bại'),
     ]
     PAYMENT_CHOICES = [
@@ -62,7 +64,7 @@ class DonHang(models.Model):
     ho_ten = models.CharField(max_length=100)
     so_dien_thoai = models.CharField(max_length=20)
     email = models.EmailField()
-    dia_chi = models.TextField()
+    dia_chi = models.CharField(max_length=255, default="", blank=True)
     tinh = models.CharField(max_length=50)
     phuong_xa = models.CharField(max_length=50)
     ghi_chu = models.TextField(blank=True, default='')
@@ -105,10 +107,12 @@ class DonHangItem(models.Model):
 
 class TrangThaiDonHang(models.Model):
     STATUS_CHOICES = [
-        ('Cho xac nhan','Chờ xác nhận'),
-        ('Dang giao', 'Đang giao'),
-        ('Thanh cong', 'Thành công'),
-        ('That bai', 'Thất bại'),
+        ('cho_xac_nhan', 'Chờ xác nhận'),
+        ('da_xac_nhan', 'Người bán đã xác nhận'),
+        ('dang_giao', 'Đang giao'),
+        ('da_giao', 'Đã giao'),
+        ('thanh_cong', 'Thành công'),
+        ('that_bai', 'Thất bại'),
     ]
 
     don_hang = models.ForeignKey(DonHang, on_delete=models.CASCADE, related_name='lich_su_trang_thai')

@@ -16,7 +16,7 @@
         font-weight: 800;
         color: #E96607;
         margin-bottom: 30px;
-        font-family: 'Baloo Bhai', sans-serif;
+        font-family: 'Tilt Warp', sans-serif;
     }
     
     .status-tabs {
@@ -95,7 +95,7 @@
         background: #fff3cd;
         color: #856404;
     }
-    
+
     .status-dang-giao {
         background: #d1ecf1;
         color: #0c5460;
@@ -219,13 +219,13 @@
 
 <div class="order-tracking-container">
     <h1 class="page-title" style="font-family: 'Roboto', sans-serif; color: #E96607;">Theo dõi đơn hàng</h1>
-    
+
     <!-- Thanh chọn trạng thái -->
     <div class="status-tabs">
         <button class="tab active" data-tab="tat-ca">Tất cả</button>
         <button class="tab" data-tab="cho-xac-nhan">Chờ xác nhận</button>
         <button class="tab" data-tab="dang-giao">Đang giao</button>
-        <button class="tab" data-tab="hoan-thanh">Hoàn thành</button>
+        <button class="tab" data-tab="thanh-cong">Thành công</button>
         <button class="tab" data-tab="that-bai">Thất bại</button>
     </div>
     
@@ -242,10 +242,14 @@
                     <div>
                         {% if don.trang_thai == 'cho_xac_nhan' %}
                             <span class="status-badge status-cho-xac-nhan">{{ don.get_trang_thai_display }}</span>
+                        {% elif don.trang_thai == 'da_xac_nhan' %}
+                            <span class="status-badge" style="background:#d6eaff; color:#004085;">{{ don.get_trang_thai_display }}</span>
                         {% elif don.trang_thai == 'dang_giao' %}
                             <span class="status-badge status-dang-giao">{{ don.get_trang_thai_display }}</span>
                         {% elif don.trang_thai == 'da_giao' %}
                             <span class="status-badge status-da-giao">{{ don.get_trang_thai_display }}</span>
+                        {% elif don.trang_thai == 'thanh_cong' %}
+                            <span class="status-badge" style="background:#c3e6cb; color:#155724;">{{ don.get_trang_thai_display }}</span>
                         {% elif don.trang_thai == 'that_bai' %}
                             <span class="status-badge status-that-bai">{{ don.get_trang_thai_display }}</span>
                         {% endif %}
@@ -326,7 +330,7 @@
                         <span class="status-badge status-cho-xac-nhan">{{ don.get_trang_thai_display }}</span>
                     </div>
                 </div>
-                
+
                 <div class="order-items">
                     {% for item in don.items.all %}
                     <div class="order-item">
@@ -343,7 +347,7 @@
                     </div>
                     {% endfor %}
                 </div>
-                
+
                 <div class="order-summary">
                     <div class="summary-row total">
                         <span>Tổng thanh toán:</span>
@@ -358,7 +362,7 @@
             </div>
         {% endif %}
     </div>
-    
+
     <!-- Tab Đang giao -->
     <div id="dang-giao" class="order-list">
         {% if dang_giao %}
@@ -420,7 +424,7 @@
                         <span class="status-badge status-da-giao">{{ don.get_trang_thai_display }}</span>
                     </div>
                 </div>
-                
+
                 <div class="order-items">
                     {% for item in don.items.all %}
                     <div class="order-item">
@@ -437,7 +441,7 @@
                     </div>
                     {% endfor %}
                 </div>
-                
+
                 <div class="order-summary">
                     <div class="summary-row total">
                         <span>Tổng thanh toán:</span>
@@ -452,7 +456,61 @@
             </div>
         {% endif %}
     </div>
-    
+    <!-- Tab Thành công -->
+<div id="thanh-cong" class="order-list">
+    {% if thanh_cong %}
+        {% for don in thanh_cong %}
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <div class="order-id">Đơn hàng #{{ don.id }}</div>
+                    <div class="order-date">{{ don.ngay_dat|date:"d/m/Y H:i" }}</div>
+                </div>
+                <div>
+                    <span class="status-badge" style="background:#c3e6cb; color:#155724;">
+                        {{ don.get_trang_thai_display }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="order-items">
+                {% for item in don.items.all %}
+                <div class="order-item">
+                    {% if item.san_pham.anh_dai_dien %}
+                        <img src="{{ item.san_pham.anh_dai_dien.url }}" class="item-image">
+                    {% else %}
+                        <img src="{% static 'images/placeholder.png' %}" class="item-image">
+                    {% endif %}
+                    <div class="item-info">
+                        <div class="item-name">{{ item.san_pham.ten_sp }}</div>
+                        <div class="item-details">
+                            Số lượng: {{ item.so_luong }} ×
+                            {{ item.gia|floatformat:0|intcomma }}₫
+                        </div>
+                        <div class="item-price">
+                            {{ item.thanh_tien|floatformat:0|intcomma }}₫
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="order-summary">
+                <div class="summary-row total">
+                    <span>Tổng thanh toán:</span>
+                    <span>{{ don.tong_thanh_toan|floatformat:0|intcomma }}₫</span>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <p>Không có đơn hàng thành công.</p>
+        </div>
+    {% endif %}
+</div>
+
     <!-- Tab Thất bại -->
     <div id="that-bai" class="order-list">
         {% if that_bai %}

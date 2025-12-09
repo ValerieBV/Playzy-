@@ -238,18 +238,24 @@ def update_quantity(request, item_id):
 @login_required
 def theo_doi_don_hang(request):
     tat_ca = DonHang.objects.filter(nguoi_dung=request.user)
+
     cho_xac_nhan = tat_ca.filter(trang_thai="cho_xac_nhan")
+    da_xac_nhan = tat_ca.filter(trang_thai="da_xac_nhan")
     dang_giao = tat_ca.filter(trang_thai="dang_giao")
-    hoan_thanh = tat_ca.filter(trang_thai="da_giao")
+    da_giao = tat_ca.filter(trang_thai="da_giao")
+    thanh_cong = tat_ca.filter(trang_thai="thanh_cong")
     that_bai = tat_ca.filter(trang_thai="that_bai")
 
-    return render(request, 'Muahang/theo_doi_don_hang.html', {
-        'tat_ca': tat_ca,
-        'cho_xac_nhan': cho_xac_nhan,
-        'dang_giao': dang_giao,
-        'hoan_thanh': hoan_thanh,
-        'that_bai': that_bai,
+    return render(request, "Muahang/theo_doi_don_hang.html", {
+        "tat_ca": tat_ca,
+        "cho_xac_nhan": cho_xac_nhan,
+        "da_xac_nhan": da_xac_nhan,
+        "dang_giao": dang_giao,
+        "da_giao": da_giao,
+        "thanh_cong": thanh_cong,
+        "that_bai": that_bai
     })
+
 
 
 # chi tiết đơn hàng
@@ -266,12 +272,12 @@ def chi_tiet_don_hang(request, don_hang_id):
     })
 
 
-# thanh toán QR code
+# thanh toán QR code (demo)
 @login_required
 def thanh_toan_qr(request, don_hang_id):
     don_hang = get_object_or_404(DonHang, id=don_hang_id, nguoi_dung=request.user)
     
-    # Tạo mã QR ngẫu nhiên
+    # Tạo mã QR ngẫu nhiên (demo)
     # Tạo một chuỗi ngẫu nhiên để làm nội dung QR code
     random_string = ''.join(random.choices(string.ascii_uppercase + string.digits, k=20))
     qr_content = f"DEMO-{don_hang.payment_method}-{don_hang.id}-{random_string}"
@@ -314,7 +320,7 @@ def thanh_toan_qr(request, don_hang_id):
     return render(request, 'Muahang/thanh_toan_qr.html', context)
 
 
-# xác nhận thanh toán
+# xác nhận thanh toán (demo)
 @login_required
 @require_POST
 def xac_nhan_thanh_toan(request, don_hang_id):
@@ -349,6 +355,12 @@ def ket_qua_giao_hang(request, donhang_id, trang_thai):
         'trang_thai': trang_thai,
     })
 
+
+# # danh sách sản phẩm
+# def sanpham_view(request):
+#     sanphams = SanPham.objects.all()
+#     return render(request, 'Muahang/sanpham.html', {'sanphams': sanphams})
+# Nên xóa hàm trên vì đã có app SanPham
 
 # --- THÊM GIỎ HÀNG (NÚT "THÊM GIỎ HÀNG") ---
 def them_gio_hang(request, ma_sp):

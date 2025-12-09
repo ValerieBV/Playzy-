@@ -2,6 +2,35 @@ from django import forms
 from Khohang.models import KhoHang
 from Sanpham.models import SanPham
 
+class ThemSanPhamVaoKhoForm(forms.Form):
+    """Form để thêm sản phẩm vào kho hàng trực tiếp"""
+    ma_sp = forms.ModelChoiceField(
+        queryset=SanPham.objects.all(),
+        label="Sản phẩm",
+        widget=forms.Select(attrs={'class': 'form-select', 'style': 'width: 100%;'})
+    )
+    so_luong_ton_kho = forms.IntegerField(
+        label="Số lượng tồn kho",
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': 1, 'value': 0})
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        ma_sp = cleaned_data.get('ma_sp')
+        so_luong = cleaned_data.get('so_luong_ton_kho')
+        
+        if ma_sp:
+            # Kiểm tra xem sản phẩm đã có trong kho chưa
+            if KhoHang.objects.filter(ma_sp=ma_sp).exists():
+                self.add_error('ma_sp', f"Sản phẩm {ma_sp.ten_sp} đã có trong kho hàng.")
+        
+        if so_luong is not None and so_luong < 0:
+            self.add_error('so_luong_ton_kho', "Số lượng tồn kho không được âm.")
+        
+        return cleaned_data
+
+
 class ThemGiaoDichForm(forms.Form):
     CHOICES = [
         ('NHAP', 'Nhập kho (Từ NCC)'),

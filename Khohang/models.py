@@ -32,6 +32,74 @@ class KhoHang(models.Model):
         verbose_name="Thời gian cập nhật"
     )
 
+    def save(self, *args, **kwargs):
+        """Tự động tạo mã kho hàng nếu chưa có hoặc bị trùng"""
+        import time
+        
+        # Chỉ tạo mã kho hàng nếu chưa có hoặc đang dùng giá trị default
+        if not self.ma_kho_hang or self.ma_kho_hang == 'KH0001' or not self.pk:
+            # Lấy mã kho hàng lớn nhất hiện tại
+            if self.pk:
+                last_kho = KhoHang.objects.exclude(pk=self.pk).order_by('-ma_kho_hang').first()
+            else:
+                last_kho = KhoHang.objects.order_by('-ma_kho_hang').first()
+            
+            if last_kho:
+                try:
+                    last_number = int(last_kho.ma_kho_hang.replace('KH', ''))
+                    new_number = last_number + 1
+                except ValueError:
+                    new_number = 1
+            else:
+                new_number = 1
+            
+            # Tạo mã mới và kiểm tra unique bằng cách query database mỗi lần
+            max_attempts = 1000
+            attempt = 0
+            while attempt < max_attempts:
+                ma_kho_hang = f'KH{new_number:04d}'
+                # Kiểm tra lại trong database mỗi lần để tránh race condition
+                if not KhoHang.objects.filter(ma_kho_hang=ma_kho_hang).exclude(pk=self.pk if self.pk else None).exists():
+                    self.ma_kho_hang = ma_kho_hang
+                    break
+                new_number += 1
+                attempt += 1
+            
+            # Nếu không tìm được trong 1000 lần thử, dùng timestamp với format KHXXXX (4 số)
+            if attempt >= max_attempts:
+                timestamp_code = f'KH{int(time.time() * 1000) % 10000:04d}'
+                # Đảm bảo timestamp code cũng unique bằng cách query database
+                max_timestamp_attempts = 100
+                timestamp_attempt = 0
+                while KhoHang.objects.filter(ma_kho_hang=timestamp_code).exclude(pk=self.pk if self.pk else None).exists() and timestamp_attempt < max_timestamp_attempts:
+                    time.sleep(0.001)  # Đợi 1ms để timestamp thay đổi
+                    timestamp_code = f'KH{int(time.time() * 1000) % 10000:04d}'
+                    timestamp_attempt += 1
+                self.ma_kho_hang = timestamp_code
+        
+        # Thử save với retry nếu vẫn bị conflict
+        max_retries = 3
+        for retry in range(max_retries):
+            try:
+                super().save(*args, **kwargs)
+                break
+            except Exception as e:
+                if 'UNIQUE constraint' in str(e) or 'unique' in str(e).lower():
+                    if retry < max_retries - 1:
+                        # Nếu bị conflict, tạo lại mã kho hàng với timestamp
+                        timestamp_code = f'KH{int(time.time() * 1000) % 10000:04d}'
+                        max_timestamp_attempts = 100
+                        timestamp_attempt = 0
+                        while KhoHang.objects.filter(ma_kho_hang=timestamp_code).exclude(pk=self.pk if self.pk else None).exists() and timestamp_attempt < max_timestamp_attempts:
+                            time.sleep(0.001)
+                            timestamp_code = f'KH{int(time.time() * 1000) % 10000:04d}'
+                            timestamp_attempt += 1
+                        self.ma_kho_hang = timestamp_code
+                    else:
+                        raise
+                else:
+                    raise
+
     def __str__(self):
         return f"{self.ma_sp.TenSP} - Tồn: {self.so_luong_ton_kho}"
 

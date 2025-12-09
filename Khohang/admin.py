@@ -48,7 +48,7 @@ class KhoHangAdmin(admin.ModelAdmin):
     don_vi_tinh.short_description = "Đơn vị tính"
 
     def don_gia_mua(self, obj):
-        return obj.ma_sp.don_gia_mua
+        return obj.ma_sp.gia_goc
     don_gia_mua.short_description = "Đơn giá mua"
 
 

@@ -1,3 +1,6 @@
+/* Import font pixelated cho logo */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 /* ==== NAVBAR (thanh header) ==== */
 .navbar, .navbar-dark, .bg-primary {
   background-color: #1E90FF !important;
@@ -11,15 +14,91 @@
   color: #f0f0f0 !important;
 }
 
-/* ==== SIDEBAR BRAND ==== */
-.brand-link {
-  background-color: #ffffff !important;
-  color: #E96607 !important;
-  font-weight: bold;
+/* ==== SIDEBAR ==== */
+/* Đổi màu sidebar từ đen sang xanh */
+.sidebar-primary, .main-sidebar, [class*="sidebar-primary"] {
+  background-color: #1E90FF !important;
+  background-image: none !important;
 }
 
-.brand-link:hover {
-  color: #1E90FF !important;
+/* Màu chữ trong sidebar */
+.sidebar-primary .nav-sidebar > .nav-item > .nav-link,
+.sidebar-primary .nav-sidebar .nav-link,
+.sidebar-primary .nav-sidebar .nav-item > a {
+  color: #ffffff !important;
+}
+
+/* Màu khi hover */
+.sidebar-primary .nav-sidebar > .nav-item > .nav-link:hover,
+.sidebar-primary .nav-sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* Màu khi active */
+.sidebar-primary .nav-sidebar > .nav-item > .nav-link.active,
+.sidebar-primary .nav-sidebar .nav-link.active {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+/* ==== SIDEBAR BRAND - CHỮ PLAYZY ==== */
+/* Style đơn giản và hài hòa cho brand link */
+.sidebar-primary .brand-link {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  font-family: 'Press Start 2P', 'Baloo Bhai', 'Jersey 20', 'Roboto', cursive, sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  line-height: 1.4 !important;
+}
+
+.sidebar-primary .brand-link:hover {
+  color: #ffffff !important;
+  opacity: 0.9;
+}
+
+/* Style cho user panel info (phần PLAYZY lớn hơn) */
+.sidebar-primary .user-panel .info,
+.sidebar-primary .user-panel .info a {
+  color: #ffffff !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  font-family: 'Press Start 2P', 'Baloo Bhai', 'Jersey 20', 'Roboto', cursive, sans-serif !important;
+  text-transform: uppercase !important;
+}
+
+
+/* ==== ĐỔI TÊN DASHBOARD THÀNH TRANG CHỦ ==== */
+/* Việc đổi tên sẽ được xử lý bởi JavaScript (custom_admin.js) */
+
+/* ==== STYLE CÁC SECTION HEADER (MỤC CHÍNH) ==== */
+/* Đổi màu cam và tăng font size cho các section header */
+/* Chỉ target các nav-header thực sự */
+.sidebar-primary .nav-header {
+  color: #E96607 !important;
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1rem !important;
+  margin-top: 0.5rem;
+}
+
+/* Style cho các app group labels - chỉ áp dụng cho link đầu tiên của mỗi app group */
+.sidebar-primary .nav-sidebar .nav-item.nav-header .nav-link,
+.sidebar-primary .nav-sidebar > .nav-item.nav-header .nav-link {
+  color: #E96607 !important;
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+}
+
+/* Style cho các text trong nav-header */
+.sidebar-primary .nav-header span,
+.sidebar-primary .nav-header .nav-link-text {
+  color: #E96607 !important;
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
 }
 
 /* ==== BUTTONS ==== */

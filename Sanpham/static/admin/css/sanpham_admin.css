@@ -1,0 +1,61 @@
+/* Khung chỉ bao quanh ô nhập (Select2) cho Sản phẩm liên quan */
+.form-group.field-san_pham_lien_quan {
+    margin-top: 10px;
+}
+
+.form-group.field-san_pham_lien_quan label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    color: #495057;
+}
+
+/* Style cho input gốc trước khi Select2 khởi tạo */
+.form-group.field-san_pham_lien_quan select[name="san_pham_lien_quan"],
+.form-group.field-san_pham_lien_quan #id_san_pham_lien_quan {
+    border: 1px solid #dee2e6 !important;
+    border-radius: 4px !important;
+    min-height: 38px !important;
+    padding: 6px 8px !important;
+    background-color: #fff !important;
+    width: 100% !important;
+}
+
+/* Style cho Select2 container */
+.form-group.field-san_pham_lien_quan .select2-container {
+    width: 100% !important;
+}
+
+/* Khung cho Select2 selection - hiển thị ngay từ đầu */
+.form-group.field-san_pham_lien_quan .select2-container--default .select2-selection--multiple,
+.form-group.field-san_pham_lien_quan .select2-container--default .select2-selection--single {
+    border: 1px solid #dee2e6 !important;
+    border-radius: 4px !important;
+    min-height: 38px !important;
+    padding: 6px 8px !important;
+    background-color: #fff !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+/* Style khi focus */
+.form-group.field-san_pham_lien_quan .select2-container--default.select2-container--focus .select2-selection--multiple,
+.form-group.field-san_pham_lien_quan .select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: #80bdff !important;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25) !important;
+}
+
+/* Style cho các tag đã chọn */
+.form-group.field-san_pham_lien_quan .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #007bff !important;
+    border: 1px solid #007bff !important;
+    color: #fff !important;
+    border-radius: 3px !important;
+    padding: 2px 8px !important;
+    margin: 3px !important;
+}
+
+/* Đảm bảo padding không làm lệch bố cục */
+.form-group.field-san_pham_lien_quan .row {
+    margin: 0;
+}
+

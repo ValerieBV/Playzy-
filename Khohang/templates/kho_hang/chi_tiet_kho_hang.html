@@ -36,6 +36,39 @@
     .status { padding: 5px 10px; border-radius: 12px; font-size: 0.9em; color: #fff; font-weight: bold; }
     .status-available { background: #28a745; }
     .status-out { background: #dc3545; }
+    .row-add { background-color: #f0f8ff; }
+    .row-add td { vertical-align: middle; }
+    .row-add input, .row-add select { 
+      width: 100%; 
+      padding: 8px; 
+      border: 1px solid #ccc; 
+      border-radius: 4px; 
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    .btn-add-row { 
+      background-color: #28a745; 
+      color: white; 
+      border: none; 
+      padding: 8px 15px; 
+      border-radius: 4px; 
+      cursor: pointer;
+      font-weight: bold;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-add-row:hover { background-color: #218838; }
+    .row-add form { margin: 0; display: contents; }
+    table { table-layout: fixed; }
+    th:nth-child(1), td:nth-child(1) { width: 5%; }
+    th:nth-child(2), td:nth-child(2) { width: 12%; }
+    th:nth-child(3), td:nth-child(3) { width: 25%; }
+    th:nth-child(4), td:nth-child(4) { width: 15%; }
+    th:nth-child(5), td:nth-child(5) { width: 12%; }
+    th:nth-child(6), td:nth-child(6) { width: 12%; }
+    th:nth-child(7), td:nth-child(7) { width: 19%; }
   </style>
 
   <div class="breadcrumb">
@@ -105,7 +138,7 @@
           <td>{{ sp.ma_sp.ten_sp }}</td>
           <td>{{ sp.ma_sp.danh_muc.ten_danh_muc }}</td>
           <td>{{ sp.so_luong_ton_kho }}</td>
-          <td>{{ sp.ma_sp.don_gia_mua|floatformat:0 }}₫</td>
+          <td>{{ sp.ma_sp.gia_goc|floatformat:0 }}₫</td>
           <td>
             {% if sp.so_luong_ton_kho > 0 %}
               <span class="status status-available">Còn hàng</span>
@@ -117,6 +150,32 @@
         {% empty %}
         <tr><td colspan="7" class="text-muted">Không có sản phẩm nào trong kho.</td></tr>
         {% endfor %}
+        <!-- Hàng thêm sản phẩm mới -->
+        <tr class="row-add">
+          <form method="post" id="form-them-san-pham" style="display: contents;">
+            {% csrf_token %}
+            <input type="hidden" name="them_san_pham" value="1">
+            <td>{{ danh_sach_ton_kho|length|add:1 }}</td>
+            <td>
+              <select name="ma_sp" required>
+                <option value="">-- Chọn sản phẩm --</option>
+                {% for sp in san_pham_chua_co_kho %}
+                  <option value="{{ sp.ma_sp }}">[{{ sp.ma_sp }}] {{ sp.ten_sp }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td colspan="2" style="color: #999;">-</td>
+            <td>
+              <input type="number" name="so_luong_ton_kho" min="0" value="0" required>
+            </td>
+            <td style="color: #999;">-</td>
+            <td>
+              <button type="submit" class="btn-add-row">
+                <i class="fas fa-plus"></i> Thêm
+              </button>
+            </td>
+          </form>
+        </tr>
       </tbody>
     </table>
   </div>

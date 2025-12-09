@@ -67,38 +67,51 @@ def dang_ky(request):
 
     return render(request, 'Taikhoan/dang_ky.html')
 
+# ------ HÀM CHẶN ADMIN ------
+def block_admin(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect('/admin/')
+    return None
 
 # ------------------ TRANG ĐĂNG NHẬP ------------------
 def dang_nhap(request):
     # Nếu đã đăng nhập, redirect về trang chủ
     if request.user.is_authenticated:
+
+        # Nếu là admin -> không cho vào trang user -> chuyển về admin
+        if request.user.is_authenticated and request.user.is_superuser:
+            return redirect('/admin/')
+
+        # --- Nếu là admin và cố quay lại trang đăng nhập → đăng xuất ---
+        if request.user.is_staff or request.user.is_superuser:
+            logout(request)
+            messages.info(request, 'Bạn đã thoát khỏi chế độ quản trị.')
+            return redirect('dangnhap')
+
         return redirect('home')
-    
+
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
 
-        # Kiểm tra các trường bắt buộc
         if not username or not password:
             messages.error(request, 'Vui lòng điền đầy đủ thông tin đăng nhập.')
             return redirect('dangnhap')
 
-        # Xác thực thông tin người dùng
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
             login(request, user)
             messages.success(request, f'Chào mừng {user.username} quay trở lại!')
-            # Nếu là admin hoặc staff → chuyển sang trang quản trị
+
             if user.is_superuser or user.is_staff:
-                return redirect('/admin/')
-            # Nếu là người dùng thường → về trang chủ
+                return redirect('/admin/?from_login=true')
             else:
-                # Kiểm tra xem có next parameter không (redirect sau khi login)
                 next_url = request.GET.get('next', 'home')
                 return redirect(next_url)
+
         else:
-            messages.error(request, 'Tên tài khoản hoặc mật khẩu không đúng, vui lòng thử lại.')
+            messages.error(request, 'Tên tài khoản hoặc mật khẩu không đúng.')
             return redirect('dangnhap')
 
     return render(request, 'Taikhoan/dang_nhap.html')
@@ -151,8 +164,6 @@ def thong_tin_ca_nhan(request):
         return redirect('thong_tin_ca_nhan')
 
     return render(request, 'Taikhoan/thong_tin_ca_nhan.html', {'nguoidung': nguoidung, 'user': user})
-
-# ------------------ TRANG LỊCH SỬ MUA HÀNG ------------------
 
 
 
